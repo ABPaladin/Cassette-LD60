@@ -3,7 +3,7 @@ extends Resource
 @export var recording: AudioStream
 @export_file("*.wav", "*.ogg", "*.mp3") var recording_path := ""
 @export var simulated_duration := 180.0
-@export var label := "GLORIA / SIDE A"
+@export var label := "EMILY / SIDE A"
 @export var regions: Array[Dictionary] = []
 @export var timestamps: Array[Dictionary] = []
 @export var pitch := 1.0

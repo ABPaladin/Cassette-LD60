@@ -49,7 +49,7 @@ in the bundled pack and passed the Chromium pet-sequence check.
 
 ## Missing content and known limitations
 
-- No original Gloria portrait or other teammate illustration textures were found
+- No original Emily portrait or other teammate illustration textures were found
   in the project. Import `assets/sketchbook/gloria.png`; the drawing page is ready
   to load it. Additional pages accept `artwork` or `artwork_path`. No replacement
   drawings were generated. See `assets/sketchbook/README.md`.

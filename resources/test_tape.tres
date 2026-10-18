@@ -5,6 +5,6 @@
 script = ExtResource("1")
 recording = ExtResource("2")
 simulated_duration = 180.0
-label = "GLORIA / SIDE A"
+label = "EMILY / SIDE A"
 regions = Array[Dictionary]([{"id": "development_region", "start": 30.0, "end": 36.0}])
 timestamps = Array[Dictionary]([{"id": "development_mark", "time": 60.0}])

@@ -17,7 +17,7 @@ func bind(investigation: Node) -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation",14)
 	add_child(column)
-	UI.label(column,"RECOVERED WORDS / GLORIA'S TAPE",22)
+	UI.label(column,"RECOVERED WORDS / EMILY'S TAPE",22)
 	UI.label(column,"Choose a position, then a recovered fragment. Listen again if needed.",16)
 	choices = HBoxContainer.new()
 	column.add_child(choices)

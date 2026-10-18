@@ -1,7 +1,7 @@
 # Team illustrations (missing)
 
 No teammate illustration textures were present at the release-work checkpoint.
-Import the original Gloria portrait as `gloria.png` here; the drawing page will
+Import the original Emily portrait as `gloria.png` here; the drawing page will
 load it automatically. Do not generate a replacement. Additional illustrations
 can be assigned to `artwork` or `artwork_path` in `resources/pages/*.tres`.
 

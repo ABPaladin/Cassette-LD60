@@ -30,7 +30,7 @@ func _ready() -> void:
 	ending.finished.connect(func(): return_to_menu.emit())
 	ending.stage_changed.connect(_ending_audio)
 	inspector.selection_changed.connect(_selection_changed)
-	inspector.hover_changed.connect(func(object): title.text = object.display_name if object != null else "GLORIA'S BELONGINGS / 1998")
+	inspector.hover_changed.connect(func(object): title.text = object.display_name if object != null else "EMILY'S BELONGINGS / 1998")
 	_setup_investigation()
 	var audio = get_node_or_null("/root/AudioManager")
 	if audio != null: audio.start_room($Objects/Cassette/TapeAudioController)
@@ -109,7 +109,7 @@ func _build_ui() -> void:
 	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui.theme = UI.make_theme()
 	layer.add_child(ui)
-	title = UI.label(ui, "GLORIA'S BELONGINGS / 1998", 20)
+	title = UI.label(ui, "EMILY'S BELONGINGS / 1998", 20)
 	title.position = Vector2(24, 18)
 	instructions = UI.label(ui, "Click an object to inspect it.", 16)
 	instructions.position = Vector2(24, 506)
@@ -141,7 +141,7 @@ func _selection_changed(object: Node3D) -> void:
 	timeline.visible = object != null and object.object_id == "cassette"
 	for child in actions.get_children(): child.queue_free()
 	if object == null:
-		title.text = "GLORIA'S BELONGINGS / 1998"
+		title.text = "EMILY'S BELONGINGS / 1998"
 		instructions.text = "Click an object to inspect it."
 		return
 	title.text = object.display_name

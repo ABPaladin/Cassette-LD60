@@ -7,7 +7,7 @@ sample libraries, external recordings or voice likenesses are used. These output
 may be distributed with Cassette-LD60. Generator sources are in `tools/`.
 
 The 180-second recording is explicitly a tone/transcript placeholder, NOT the final
-Gloria performance or song. Caption scripts and fragments live in
+Emily performance or song. Caption scripts and fragments live in
 `resources/investigation.tres`. Assign a final bundled recording in
 `resources/test_tape.tres` and per-fragment replay clips in the investigation data.
 Keep marker times aligned with the final recording. Pre-render distortion/reverb

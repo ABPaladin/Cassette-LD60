@@ -2,5 +2,5 @@
 [ext_resource type="Script" path="res://scripts/book_page.gd" id="1"]
 [resource]
 script = ExtResource("1")
-title = "Gloria's notes"
+title = "Emily's notes"
 text = "October, 1998\n\nRemember to call.\nBring the notebook.\n\n    /\_/\\\n   ( o.o )\n    > ^ <\n\n[temporary page]"

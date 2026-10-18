@@ -1,7 +1,7 @@
 extends Control
 signal finished
 @export var characters_per_second := 34.0
-@export var lines: PackedStringArray = ["My best friend Gloria died not long ago.", "They said she took her own life.", "I brought some of her belongings home.", "But something doesn't feel right.", "I need to know what really happened."]
+@export var lines: PackedStringArray = ["My best friend Emily died not long ago.", "They said she took her own life.", "I brought some of her belongings home.", "But something doesn't feel right.", "I need to know what really happened."]
 const UI = preload("res://scripts/ui_style.gd")
 var line_index := 0
 var progress := 0.0

@@ -5,7 +5,7 @@ Open `project.godot` with Godot **4.7.2** and press **F5**. The main scene is
 
 ## Play
 
-- START begins Gloria's introduction. Click/Space reveals or advances a line;
+- START begins Emily's introduction. Click/Space reveals or advances a line;
   Escape or SKIP bypasses it.
 - The elevated tabletop camera stays at a fixed position and FOV. Cursor movement
   adds only subtle, smoothed rotation (horizontal +/-3 degrees, vertical +/-2).
