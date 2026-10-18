@@ -1,5 +1,23 @@
 # Gameplay rebuild
 
+## Targeted camera and pencil-navigation adjustment — 2026-10-18
+- Tightened tabletop framing to a close, near-overhead view centered on the
+  cassette; slowed edge pan, widened the neutral center and capped diagonal speed.
+  Camera home focus remains configurable. Existing object placements are unchanged.
+- Removed both five-second jump buttons and direct timeline scrubbing. PLAY/PAUSE
+  and the position readout remain; circular pencil movement controls tape seeking.
+- Preserved the working angular gesture implementation, ending sequence, scene
+  geometry, sketchbook resources and PSX addon. The current drawing page resource
+  contains placeholder text, not an assigned girl texture; no artwork was edited.
+- Graphical Godot 4.7.2 regression: 79 checks passed, including both circular
+  directions, angle wrap, center crossing, release, camera bounds and full game loop.
+  Rendered tabletop/inspection/pencil/ending views captured and reviewed.
+- MCP script validation passed for all changed scripts; all 9 scene references
+  passed project validation. Editor error list: 0.
+- Initial added test needed an explicit Array type; corrected before the passing
+  renderer run. Verbose renderer log includes a nonfatal NVIDIA profile message
+  (NVAPI_EXECUTABLE_ALREADY_IN_USE); the capture run completed without errors.
+
 ## Phase 0 — safety and cleanup
 - Full file snapshot: `.rebuild_backup/2026-10-18/before-rebuild.zip`, with SHA-256 manifest.
 - Safety commit preserves the previous generated prototype and existing PSX addon.

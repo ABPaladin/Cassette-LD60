@@ -20,13 +20,26 @@ func _run() -> void:
 	for object in scene.get_node("Objects").get_children():
 		if camera.is_position_in_frustum(object.global_position): visible_objects += 1
 	check(visible_objects < 4, "Initial framing requires exploration rather than showing every object")
+	var home_pixel: Vector2 = camera.unproject_position(scene.get_node("Objects/Cassette").global_position) / root.get_visible_rect().size
+	check(home_pixel.distance_to(Vector2(.5,.5)) < .08, "Close tabletop view opens centered on the cassette")
+	check(rad_to_deg(-camera.rotation.x) > 65.0, "Tabletop camera reads as an angled overhead composition")
 	var original: Vector3 = camera.position
+	var original_focus: Vector3 = camera.focus
 	camera.step_camera(0.1, Vector2(1,0))
-	check(camera.focus.x > 0 and camera.focus.z < .25, "Cursor upper-right pans across table")
+	check(camera.focus.x > original_focus.x and camera.focus.z < original_focus.z, "Cursor upper-right pans across table")
 	check(camera.position.distance_to(original) < 1.0, "Camera movement interpolates")
 	for i in range(100): camera.step_camera(.1, Vector2(1,0))
 	check(is_equal_approx(camera.focus.x, camera.movement_limits.x), "Camera X boundary")
 	check(is_equal_approx(camera.focus.z, -camera.movement_limits.y), "Camera Z boundary")
+	for corner in [Vector2(-1,-1),Vector2(1,-1),Vector2(-1,1),Vector2(1,1)]:
+		camera.focus = Vector3(corner.x * camera.movement_limits.x,0,corner.y * camera.movement_limits.y)
+		camera.step_camera(3.0,Vector2(.5,.5))
+		var table_fills_view := true
+		for screen_corner in [Vector2.ZERO,Vector2(1,0),Vector2(0,1),Vector2.ONE]:
+			var pixel: Vector2 = screen_corner * root.get_visible_rect().size
+			var surface: Variant = Plane(Vector3.UP,0).intersects_ray(camera.project_ray_origin(pixel),camera.project_ray_normal(pixel))
+			if surface == null or absf(surface.x) > 4.0 or absf(surface.z) > 3.0: table_fills_view = false
+		check(table_fills_view,"Table fills the screen at pan boundary " + str(corner))
 	var saved: Vector3 = camera.focus
 	camera.inspect_at(Vector3(1,.5,1),1.2)
 	camera.step_camera(.1,Vector2.ZERO)
@@ -50,6 +63,9 @@ func _run() -> void:
 		check(object.global_transform.is_equal_approx(rest), object.name + " returns to its exact place")
 	check(scene.get_node("Objects").get_child_count() == 4, "Exactly four objects; no cassette player")
 	var tape = scene.get_node("Objects/Cassette/TapeAudioController")
+	check(not scene.timeline.slider.editable, "Tape position strip cannot bypass the pencil by scrubbing")
+	var transport_buttons: Array[Node] = scene.timeline.find_children("*", "Button", true, false)
+	check(transport_buttons.size() == 1 and transport_buttons[0] == scene.timeline.play_button, "Cassette controls contain only PLAY/PAUSE, without time-jump buttons")
 	tape.set_process(false)
 	tape.play()
 	tape.advance(1.25)
@@ -107,6 +123,11 @@ func _run() -> void:
 	rewind.release()
 	rewind.drag_to(center+Vector2(0,90),1.0)
 	check(absf(tape.position_seconds - 60.0) < .05, "Released mouse cannot seek")
+	rewind.start_drag(center + Vector2(90,0))
+	rewind.drag_to(center, .05)
+	rewind.drag_to(center + Vector2(-90,0), .05)
+	check(absf(tape.position_seconds - 60.0) < .05, "Crossing the reel center resets angle without a tape jump")
+	rewind.release()
 	rewind.start_drag(center+Vector2(90,0))
 	var before_limit: float = tape.position_seconds
 	rewind.drag_to(center+Vector2(-90,0),.001)

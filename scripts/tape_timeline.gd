@@ -15,14 +15,15 @@ func bind(controller: Node) -> void:
 	readout = UI.label(column, "", 16)
 	var row := HBoxContainer.new()
 	column.add_child(row)
-	UI.button(row, "<< 5s", func(): tape.seek(tape.position_seconds - 5.0))
 	play_button = UI.button(row, "PLAY", tape.toggle)
-	UI.button(row, ">> 5s", func(): tape.seek(tape.position_seconds + 5.0))
 	slider = HSlider.new()
 	slider.custom_minimum_size.x = 480
 	slider.max_value = tape.duration
 	slider.step = .01
 	slider.focus_mode = Control.FOCUS_NONE
+	# Position is a readout. Tape navigation belongs to the physical pencil gesture.
+	slider.editable = false
+	slider.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	slider.tick_count = 13
 	slider.ticks_on_borders = true
 	var track := StyleBoxFlat.new()
@@ -39,8 +40,8 @@ func bind(controller: Node) -> void:
 	knob.height = 14
 	slider.add_theme_icon_override("grabber", knob)
 	slider.add_theme_icon_override("grabber_highlight", knob)
+	slider.add_theme_icon_override("grabber_disabled", knob)
 	column.add_child(slider)
-	slider.value_changed.connect(func(value): tape.seek(value))
 
 func _process(_delta: float) -> void:
 	if tape == null: return

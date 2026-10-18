@@ -11,8 +11,9 @@ Open `project.godot` with Godot **4.7.2** and press **F5**. The main scene is
   camera is elevated and bounded; there is no walking or mouse capture.
 - Click an object to lift and inspect it. Drag to rotate, wheel to zoom, Escape,
   right-click or RETURN to put it back and restore the previous tabletop view.
-- Cassette: PLAY/PAUSE, the marked seek strip, and `<< 5s` / `>> 5s` use the same
-  transport. The current recording is deliberately **silent simulated timing,
+- Cassette: PLAY/PAUSE and a read-only tape-position strip. Use circular pencil
+  movement to rewind or advance; there are no time-jump or scrub controls.
+  The current recording is deliberately **silent simulated timing,
   03:00**, with no final mystery audio.
 - Pencil: inspect it and choose **USE ON CASSETTE**. The pencil enters the left
   reel. Hold left mouse and move in circles around that reel: clockwise rewinds,
@@ -66,8 +67,10 @@ fallback is used. Replace that resource with the supplied licensed font later.
 
 ## Tuning and future puzzle work
 
-Camera speed, strength, edge margin, limits, smoothing, inspection offset and zoom
-are exported on TabletopCamera. Rewind sensitivity, seconds per turn, inversion,
+Camera home focus, table offset, speed, strength, edge margin, limits, smoothing,
+inspection offset and zoom are exported on TabletopCamera. The close, steep view
+starts on the cassette; existing object placements are unchanged. Rewind
+sensitivity, seconds per turn, inversion,
 smoothing, dead radius and maximum seek speed are exported in `pencil_rewind.gd`.
 
 `resources/test_tape.tres` accepts a real `recording` or `recording_path`, fallback
