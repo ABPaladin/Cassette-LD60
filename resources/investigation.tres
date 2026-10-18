@@ -1,7 +1,49 @@
-[gd_resource type="Resource" load_steps=2 format=3]
-[ext_resource type="Script" path="res://scripts/investigation_data.gd" id="1"]
+[gd_resource type="Resource" format=3 uid="uid://c60xe3oj2a767"]
+
+[ext_resource type="Script" uid="uid://dkp3xmk0ufxig" path="res://scripts/investigation_data.gd" id="1"]
+
 [resource]
 script = ExtResource("1")
-fragments = Array[Dictionary]([{"id":"1", "clip":"res://assets/audio/placeholder/fragment_1.wav", "time":24.0, "duration":3.0, "message":"CHECK"}, {"id":"2", "clip":"res://assets/audio/placeholder/fragment_2.wav", "time":51.0, "duration":3.0, "message":"DON'T"}, {"id":"3", "clip":"res://assets/audio/placeholder/fragment_3.wav", "time":79.0, "duration":3.0, "message":"THE DOOR"}, {"id":"4", "clip":"res://assets/audio/placeholder/fragment_4.wav", "time":104.0, "duration":3.0, "message":"TRUST HIM"}])
+fragments = Array[Dictionary]([{
+"clip": "res://assets/audio/placeholder/fragment_1.wav",
+"duration": 3.0,
+"id": "1",
+"message": "CHECK",
+"time": 24.0
+}, {
+"clip": "res://assets/audio/placeholder/fragment_2.wav",
+"duration": 3.0,
+"id": "2",
+"message": "DON'T",
+"time": 51.0
+}, {
+"clip": "res://assets/audio/placeholder/fragment_3.wav",
+"duration": 3.0,
+"id": "3",
+"message": "THE DOOR",
+"time": 79.0
+}, {
+"clip": "res://assets/audio/placeholder/fragment_4.wav",
+"duration": 3.0,
+"id": "4",
+"message": "TRUST HIM",
+"time": 104.0
+}])
 correct_order = Array[String](["2", "4", "1", "3"])
-captions = Array[Dictionary]([{"start":0.5, "end":18.0, "text":"I couldn't say this in person. Keep my things. Remember me before all this. Goodbye."}, {"start":36.0, "end":43.0, "text":"I tried to tell someone. He was always listening."}, {"start":65.0, "end":72.0, "text":"If they call this a farewell, listen again. I wanted to come home."}, {"start":130.0, "end":142.0, "text":"I left the times in my notebook. The little pet remembers the order."}])
+captions = Array[Dictionary]([{
+"end": 18.0,
+"start": 0.5,
+"text": "I couldn't say this in person. Keep my things. Remember me before all this. Goodbye."
+}, {
+"end": 43.0,
+"start": 36.0,
+"text": "I tried to tell someone. He was always listening."
+}, {
+"end": 72.0,
+"start": 65.0,
+"text": "If they call this a farewell, listen again. I wanted to come home."
+}, {
+"end": 142.0,
+"start": 130.0,
+"text": "I left the times in my notebook. The little pet remembers the order."
+}])
