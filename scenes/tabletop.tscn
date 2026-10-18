@@ -1,6 +1,18 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/tabletop_camera.gd" id="1"]
+
+[ext_resource type="Script" path="res://scripts/tabletop.gd" id="2"]
+
+[ext_resource type="Script" path="res://scripts/inspect_controller.gd" id="3"]
+
+[ext_resource type="PackedScene" path="res://scenes/objects/cassette.tscn" id="4"]
+
+[ext_resource type="PackedScene" path="res://scenes/objects/pencil.tscn" id="5"]
+
+[ext_resource type="PackedScene" path="res://scenes/objects/sketchbook.tscn" id="6"]
+
+[ext_resource type="PackedScene" path="res://scenes/objects/tamagotchi.tscn" id="7"]
 
 [sub_resource type="StandardMaterial3D" id="1"]
 albedo_color = Color(0.29,0.15,0.072,1)
@@ -34,7 +46,7 @@ ambient_light_color = Color(0.48,0.43,0.36,1)
 ambient_light_energy = 0.45
 
 [node name="TabletopScene" type="Node3D"]
-
+script = ExtResource("2")
 
 [node name="Tabletop" type="MeshInstance3D" parent="."]
 position = Vector3(0,-0.16,0)
@@ -82,3 +94,19 @@ near = 0.03
 
 [node name="Objects" type="Node3D" parent="."]
 
+
+[node name="Cassette" parent="Objects" instance=ExtResource("4")]
+position = Vector3(-2.15,0.1,-1.05)
+
+[node name="Pencil" parent="Objects" instance=ExtResource("5")]
+position = Vector3(-2.45,0.11,1.45)
+
+[node name="Sketchbook" parent="Objects" instance=ExtResource("6")]
+position = Vector3(2.25,0.1,-1.35)
+
+[node name="Tamagotchi" parent="Objects" instance=ExtResource("7")]
+position = Vector3(2.5,0.12,1.55)
+
+[node name="InspectController" type="Node" parent="."]
+script = ExtResource("3")
+camera_path = NodePath("../TabletopCamera")

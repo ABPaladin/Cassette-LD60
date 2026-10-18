@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/tape_data.gd" id="1"]
+[resource]
+script = ExtResource("1")
+simulated_duration = 180.0
+label = "GLORIA / SIDE A"
+regions = Array[Dictionary]([{"id": "development_region", "start": 30.0, "end": 36.0}])
+timestamps = Array[Dictionary]([{"id": "development_mark", "time": 60.0}])

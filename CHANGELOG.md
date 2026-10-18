@@ -16,3 +16,15 @@
 - Mouse-edge panning with exposed strength, speed, limits and smoothing.
 - Headless scene-load and six camera behavior checks pass; corrected scene numeric
   formatting during validation. Sandbox certificate-store warning is environmental.
+
+## Phases 2–4 — inspection, cassette and pencil
+- Four separate primitive object scenes, shared inspection controller, drag rotation,
+  hover feedback, zoom, saved return positions, replaceable art slots.
+- Configurable cassette transport, contextual analog timeline, play/pause/resume,
+  seek, duration, completion, moving reels, marker/region and fragment API foundation.
+- Pencil selection inserts a 3D tool into the cassette; circular angular deltas seek
+  the actual transport. Clockwise rewinds, counterclockwise advances. Exposed speed,
+  sensitivity, inversion, smoothing, dead radius and seek-speed limit.
+- Tests pass for all four inspection round trips, transport states, regions, one
+  complete 12-second rewind turn, reverse turn across +/-PI, release and cleanup.
+- No mystery audio, solution, cassette player or final code has been implemented.

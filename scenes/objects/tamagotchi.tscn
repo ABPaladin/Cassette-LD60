@@ -1,0 +1,128 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/interactable.gd" id="1"]
+
+[sub_resource type="StandardMaterial3D" id="1"]
+albedo_color = Color(0.035,0.04,0.04,1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="2"]
+albedo_color = Color(0.69,0.64,0.48,1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="3"]
+albedo_color = Color(0.26,0.055,0.07,1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="4"]
+albedo_color = Color(0.3,0.4,0.21,1)
+roughness = 0.9
+
+[sub_resource type="BoxShape3D" id="5"]
+size = Vector3(0.62,0.18,0.75)
+
+[sub_resource type="SphereMesh" id="6"]
+radius = 0.32
+height = 0.75
+radial_segments = 10
+rings = 6
+
+[sub_resource type="BoxMesh" id="7"]
+size = Vector3(0.41,0.02,0.35)
+
+[sub_resource type="BoxMesh" id="8"]
+size = Vector3(0.1,0.045,0.1)
+
+[sub_resource type="BoxShape3D" id="9"]
+size = Vector3(0.13,0.07,0.13)
+
+[sub_resource type="BoxMesh" id="10"]
+size = Vector3(0.1,0.045,0.1)
+
+[sub_resource type="BoxShape3D" id="11"]
+size = Vector3(0.13,0.07,0.13)
+
+[sub_resource type="BoxMesh" id="12"]
+size = Vector3(0.1,0.045,0.1)
+
+[sub_resource type="BoxShape3D" id="13"]
+size = Vector3(0.13,0.07,0.13)
+
+[node name="Tamagotchi" type="StaticBody3D"]
+script = ExtResource("1")
+object_id = "tamagotchi"
+display_name = "TAMAGOTCHI"
+collision_layer = 2
+collision_mask = 0
+inspect_distance = 1.2
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+shape = SubResource("5")
+
+[node name="Visual" type="Node3D" parent="."]
+rotation = Vector3(0,0,0)
+
+[node name="Model" type="Node3D" parent="Visual"]
+
+
+[node name="Shell" type="MeshInstance3D" parent="Visual/Model"]
+mesh = SubResource("6")
+material_override = SubResource("2")
+scale = Vector3(1,0.22,1)
+rotation = Vector3(1.5707963,0,0)
+
+[node name="LCD" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0,0.1,-0.065)
+mesh = SubResource("7")
+material_override = SubResource("4")
+
+[node name="Screen" type="Label3D" parent="Visual"]
+position = Vector3(0,0.116,-0.065)
+rotation = Vector3(-1.5707963,0,0)
+text = "00"
+font_size = 48
+pixel_size = 0.004
+outline_size = 0
+modulate = Color(0.04,0.07,0.02,1)
+
+[node name="Button0" type="StaticBody3D" parent="Visual"]
+position = Vector3(-0.18,0.1,0.23)
+collision_layer = 4
+collision_mask = 0
+metadata/button_index = 0
+
+[node name="Cap" type="MeshInstance3D" parent="Visual/Button0"]
+position = Vector3(0,0,0)
+mesh = SubResource("8")
+material_override = SubResource("1")
+
+[node name="Collision" type="CollisionShape3D" parent="Visual/Button0"]
+shape = SubResource("9")
+
+[node name="Button1" type="StaticBody3D" parent="Visual"]
+position = Vector3(0.0,0.1,0.23)
+collision_layer = 4
+collision_mask = 0
+metadata/button_index = 1
+
+[node name="Cap" type="MeshInstance3D" parent="Visual/Button1"]
+position = Vector3(0,0,0)
+mesh = SubResource("10")
+material_override = SubResource("1")
+
+[node name="Collision" type="CollisionShape3D" parent="Visual/Button1"]
+shape = SubResource("11")
+
+[node name="Button2" type="StaticBody3D" parent="Visual"]
+position = Vector3(0.18,0.1,0.23)
+collision_layer = 4
+collision_mask = 0
+metadata/button_index = 2
+
+[node name="Cap" type="MeshInstance3D" parent="Visual/Button2"]
+position = Vector3(0,0,0)
+mesh = SubResource("12")
+material_override = SubResource("1")
+
+[node name="Collision" type="CollisionShape3D" parent="Visual/Button2"]
+shape = SubResource("13")
