@@ -23,12 +23,25 @@ func _ready() -> void:
 	rewinder = preload("res://scripts/pencil_rewind.gd").new()
 	add_child(rewinder)
 	ending = preload("res://scripts/ending_sequence.gd").new()
+	ending.noise_sound = preload("res://assets/audio/placeholder/rear_noise.wav")
+	ending.gunshot_sound = preload("res://assets/audio/placeholder/shot.wav")
 	ending.name = "EndingSequence"
 	add_child(ending)
 	ending.finished.connect(func(): return_to_menu.emit())
+	ending.stage_changed.connect(_ending_audio)
 	inspector.selection_changed.connect(_selection_changed)
 	inspector.hover_changed.connect(func(object): title.text = object.display_name if object != null else "GLORIA'S BELONGINGS / 1998")
 	_setup_investigation()
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio != null: audio.start_room($Objects/Cassette/TapeAudioController)
+
+func _ending_audio(stage: String) -> void:
+	ending.cue.bus = &"SFX"
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio != null and stage == "door": audio.stop_room()
+	if stage == "fall":
+		ending.cue.stream = preload("res://assets/audio/placeholder/rear_muffled.wav")
+		ending.cue.play()
 
 func _setup_investigation() -> void:
 	puzzle = preload("res://scripts/investigation.gd").new()
@@ -66,6 +79,8 @@ func _open_fragments() -> void:
 func _puzzle_solved(message: String) -> void:
 	if ending_started: return
 	ending_started = true
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio != null: audio.tension = true
 	fragment_panel.replay.stop()
 	fragment_panel.hide()
 	inspector.leave()
@@ -107,6 +122,12 @@ func _build_ui() -> void:
 	ui.add_child(timeline)
 	timeline.bind($Objects/Cassette/TapeAudioController)
 	timeline.hide()
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio != null:
+		var sound_panel: PanelContainer = audio.make_controls(ui,Vector2(24,105))
+		var sound_button := UI.button(ui,"SOUND",func(): sound_panel.visible = not sound_panel.visible)
+		sound_button.position = Vector2(24,61)
+		sound_button.add_theme_font_size_override("font_size",14)
 	if OS.is_debug_build() and not OS.has_feature("web"):
 		var debug_button := UI.button(ui, "DEBUG: ENDING [F9]", _debug_ending)
 		debug_button.position = Vector2(714, 16)

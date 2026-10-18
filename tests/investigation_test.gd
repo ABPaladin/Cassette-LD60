@@ -12,6 +12,17 @@ func run() -> void:
 	var tape = table.get_node("Objects/Cassette/TapeAudioController")
 	tape.set_process(false)
 	var puzzle = table.puzzle
+	check(tape.player.stream != null and absf(tape.duration-180.0)<.1,"Bundled three-minute recording is loaded")
+	var audio = root.get_node_or_null("AudioManager")
+	check(audio != null and audio.lamp.playing and audio.room.playing,"Lamp and room loops start in tabletop")
+	tape.play()
+	await create_timer(.5).timeout
+	check(audio.ducked and audio.lamp.volume_db < -28.0,"Ambience ducks while cassette plays")
+	tape.pause()
+	check(not audio.ducked,"Pause releases ambience ducking")
+	audio.set_volume("SFX",0)
+	check(AudioServer.is_bus_mute(AudioServer.get_bus_index("SFX")),"SFX volume control can mute its bus")
+	audio.set_volume("SFX",.8)
 	var answer: Array[String] = ["2","4","1","3"]
 	check(not puzzle.submit(answer),"Undiscovered correct answer is rejected")
 	for fragment in puzzle.data.fragments:
@@ -37,6 +48,18 @@ func run() -> void:
 	book.set_open(true)
 	book.turn_page(2)
 	check(book.page_label.text.contains("00:24") and book.page_label.text.contains("01:44"),"Notebook exposes configured timestamps")
+	book.turn_page(-1)
+	var original_page: Resource = book.pages[1]
+	var page: Resource = original_page.duplicate()
+	var image := Image.create(40,80,false,Image.FORMAT_RGBA8)
+	image.fill(Color.WHITE)
+	page.artwork = ImageTexture.create_from_image(image)
+	book.pages[1] = page
+	book._show_page()
+	check(book.page_art.visible and book.page_label.visible,"Illustration and caption coexist on the 3D page")
+	check(is_equal_approx(book.page_art.pixel_size * 80,.74),"Portrait fitting preserves original aspect ratio")
+	book.pages[1] = original_page
+	book._show_page()
 	table._open_fragments()
 	for id in answer: table.fragment_panel.place(id)
 	check(table.fragment_panel.slots == answer,"Fragment UI places discovered words into four slots")
@@ -52,6 +75,7 @@ func run() -> void:
 	check(not table.inspector.enabled and not tape.playing,"Reveal locks interaction and stops tape")
 	await create_timer(.4).timeout
 	check(table.ending.complete,"Solved signal completes the preserved ending")
+	check(not audio.lamp.playing and not audio.room.playing,"Ending stops ambience before the gunshot")
 	table.queue_free()
 	await process_frame
 	print("INVESTIGATION TESTS: ",failures," failures")

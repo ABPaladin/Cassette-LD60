@@ -4,3 +4,6 @@
 script = ExtResource("1")
 title = "Drawings"
 text = "    +--------+\n    |   /\\   |\n    |  /  \\  |\n    | /____\\ |\n    +--------+\n\n   O    []    /\\\n\nArtist sketches\nwill go here."
+
+artwork_path = "res://assets/sketchbook/gloria.png"
+artwork_caption = "I kept your things.\nI kept looking."

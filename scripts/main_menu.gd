@@ -14,6 +14,12 @@ func _ready() -> void:
 	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui.theme = UI.make_theme()
 	layer.add_child(ui)
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio != null:
+		audio.stop_room()
+		var panel: PanelContainer = audio.make_controls(ui,Vector2(24,240))
+		var sound := UI.button(ui,"SOUND",func(): panel.visible = not panel.visible)
+		sound.position = Vector2(24,448)
 	var title := UI.label(ui, "C A S S E T T E", 48)
 	title.position = Vector2(0, 50)
 	title.size.x = 960
@@ -25,9 +31,10 @@ func _ready() -> void:
 	start_button = UI.button(ui, "START", func(): start_button.disabled = true; start_requested.emit())
 	start_button.position = Vector2(380,435)
 	start_button.size = Vector2(200,48)
-	var quit_button := UI.button(ui, "QUIT", func(): get_tree().quit())
-	quit_button.position = Vector2(428,492)
-	quit_button.size.x = 104
+	if not OS.has_feature("web"):
+		var quit_button := UI.button(ui, "QUIT", func(): get_tree().quit())
+		quit_button.position = Vector2(428,492)
+		quit_button.size.x = 104
 
 func _process(delta: float) -> void:
 	elapsed += delta

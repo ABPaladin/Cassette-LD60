@@ -21,7 +21,7 @@ func _ready() -> void:
 	page_art = Sprite3D.new()
 	page_art.rotation.x = -PI / 2.0
 	page_art.position.y = .003
-	page_art.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	page_art.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
 	$Visual/PageSurface.add_child(page_art)
 	_show_page()
 
@@ -45,12 +45,22 @@ func _show_page() -> void:
 	$Visual/PageSurface.visible = opened
 	if pages.is_empty(): return
 	var page: Resource = pages[page_index]
+	if page.artwork == null and not page.artwork_path.is_empty() and ResourceLoader.exists(page.artwork_path):
+		page.artwork = load(page.artwork_path) as Texture2D
 	page_label.text = page.title + "\n\n" + (investigation.clue_text() if page.investigation_clues else page.text) + "\n\n— %d —" % (page_index + 1)
 	page_art.texture = page.artwork
 	page_art.visible = page.artwork != null
-	page_label.visible = page.artwork == null
+	page_label.visible = true
+	page_label.position.z = 0.0
+	page_label.pixel_size = .0021
+	page_label.font_size = 28
 	if page.artwork != null:
-		page_art.pixel_size = minf(.86 / page.artwork.get_width(), 1.06 / page.artwork.get_height())
+		page_art.position.z = -.16
+		page_art.pixel_size = minf(.86 / page.artwork.get_width(), .74 / page.artwork.get_height())
+		page_label.text = page.title + "\n" + page.artwork_caption
+		page_label.position.z = .39
+		page_label.font_size = 20
+		page_label.pixel_size = .0018
 
 func end_inspection() -> void:
 	set_open(false)

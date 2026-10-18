@@ -36,6 +36,7 @@ func bind(investigation: Node) -> void:
 	UI.button(controls,"LISTEN AGAIN",_replay)
 	UI.button(controls,"RETURN",dismiss)
 	replay = AudioStreamPlayer.new()
+	replay.bus = &"Cassette"
 	add_child(replay)
 	puzzle.changed.connect(refresh)
 	refresh()

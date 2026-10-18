@@ -22,6 +22,15 @@ window/size/viewport_height=540
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
+[autoload]
+
+AudioManager="*res://scripts/audio_manager.gd"
+
+[audio]
+
+general/default_playback_type.web=1
 
 [editor_plugins]
 

@@ -35,7 +35,10 @@ func _ready() -> void:
 	AudioServer.add_bus()
 	var index := AudioServer.bus_count - 1
 	AudioServer.set_bus_name(index, bus_name)
+	AudioServer.set_bus_send(index, &"Cassette")
 	player.bus = bus_name
+	# Web Sample playback cannot run bus effects. Shipping media is pre-rendered.
+	if OS.has_feature("web"): return
 	var distortion := AudioEffectDistortion.new()
 	distortion.drive = data.distortion
 	AudioServer.add_bus_effect(index, distortion)
@@ -110,7 +113,8 @@ func set_pitch(value: float) -> void:
 
 func set_muffled(value: bool) -> void:
 	var index := AudioServer.get_bus_index(bus_name)
-	if index >= 0: AudioServer.set_bus_effect_enabled(index, 2, value)
+	if index >= 0 and AudioServer.get_bus_effect_count(index) > 2:
+		AudioServer.set_bus_effect_enabled(index, 2, value)
 
 func _finish() -> void:
 	playing = false
