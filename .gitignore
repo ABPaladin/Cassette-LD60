@@ -1,0 +1,5 @@
+.godot/
+.rebuild_backup/
+artifacts/
+*.log
+__pycache__/

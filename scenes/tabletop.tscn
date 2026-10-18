@@ -1,0 +1,84 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/tabletop_camera.gd" id="1"]
+
+[sub_resource type="StandardMaterial3D" id="1"]
+albedo_color = Color(0.29,0.15,0.072,1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="2"]
+albedo_color = Color(0.012,0.016,0.018,1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="3"]
+albedo_color = Color(0.12,0.08,0.065,1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="4"]
+size = Vector3(8,0.3,6)
+
+[sub_resource type="BoxMesh" id="5"]
+size = Vector3(14,0.1,14)
+
+[sub_resource type="BoxMesh" id="6"]
+size = Vector3(10,4,0.15)
+
+[sub_resource type="BoxMesh" id="7"]
+size = Vector3(1.2,2.8,0.12)
+
+[sub_resource type="Environment" id="8"]
+background_mode = 1
+background_color = Color(0.008,0.009,0.014,1)
+ambient_light_source = 3
+ambient_light_color = Color(0.48,0.43,0.36,1)
+ambient_light_energy = 0.45
+
+[node name="TabletopScene" type="Node3D"]
+
+
+[node name="Tabletop" type="MeshInstance3D" parent="."]
+position = Vector3(0,-0.16,0)
+mesh = SubResource("4")
+material_override = SubResource("1")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+position = Vector3(0,-1.6,0)
+mesh = SubResource("5")
+material_override = SubResource("2")
+
+[node name="BackWall" type="MeshInstance3D" parent="."]
+position = Vector3(0,0.3,5.5)
+mesh = SubResource("6")
+material_override = SubResource("2")
+
+[node name="DoorPivot" type="Node3D" parent="."]
+position = Vector3(-1,0.0,5.35)
+
+[node name="Door" type="MeshInstance3D" parent="DoorPivot"]
+position = Vector3(0.6,-0.1,0)
+mesh = SubResource("7")
+material_override = SubResource("3")
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("8")
+
+[node name="TableLight" type="OmniLight3D" parent="."]
+position = Vector3(-0.3,3,0)
+light_color = Color(1,0.73,0.44,1)
+light_energy = 2.2
+omni_range = 7.0
+
+[node name="RimLight" type="OmniLight3D" parent="."]
+position = Vector3(2,2,-2)
+light_color = Color(0.38,0.46,0.65,1)
+light_energy = 0.55
+omni_range = 6.0
+
+[node name="TabletopCamera" type="Camera3D" parent="."]
+script = ExtResource("1")
+current = true
+fov = 42.0
+near = 0.03
+
+[node name="Objects" type="Node3D" parent="."]
+
