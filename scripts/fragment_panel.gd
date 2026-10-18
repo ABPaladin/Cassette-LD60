@@ -71,7 +71,7 @@ func _replay() -> void:
 	if id.is_empty():
 		feedback.text = "Choose an occupied position to listen again."
 		return
-	feedback.text = "TEMPORARY TRANSCRIPT / " + puzzle.message_for(id)
+	feedback.text = "MY NOTE / " + puzzle.message_for(id)
 	for fragment in puzzle.data.fragments:
 		if str(fragment.id) == id and fragment.has("clip"):
 			replay.stream = load(fragment.clip) as AudioStream

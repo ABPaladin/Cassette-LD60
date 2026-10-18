@@ -52,6 +52,10 @@ func leave() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not enabled: return
+	if selected != null and selected.has_method("inspection_input") and selected.inspection_input(event,camera):
+		dragging = false
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		leave()
 		get_viewport().set_input_as_handled()
@@ -72,6 +76,12 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 		dragging = false
 	if not enabled or selected == null: return
+	if selected.has_method("inspection_input") and selected.get("page_dragging") == true:
+		if event is InputEventMouseMotion or (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed):
+			selected.inspection_input(event,camera)
+			dragging = false
+			get_viewport().set_input_as_handled()
+			return
 	if (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE) or (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT):
 		leave()
 		get_viewport().set_input_as_handled()

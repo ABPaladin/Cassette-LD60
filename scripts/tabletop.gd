@@ -14,7 +14,8 @@ var rewinder: Node
 var ending: Node
 var puzzle: Node
 var fragment_panel: PanelContainer
-var subtitle: Label
+var word_note: PanelContainer
+var note_button: Button
 var ending_started := false
 
 func _ready() -> void:
@@ -48,23 +49,31 @@ func _setup_investigation() -> void:
 	add_child(puzzle)
 	puzzle.bind($Objects/Cassette/TapeAudioController)
 	puzzle.puzzle_solved.connect(_puzzle_solved)
-	subtitle = UI.label(ui,"",18)
-	subtitle.position = Vector2(160,65)
-	subtitle.size = Vector2(640,90)
-	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	puzzle.caption_changed.connect(func(text): subtitle.text = text)
+	word_note = preload("res://scripts/word_note.gd").new()
+	ui.add_child(word_note)
+	word_note.bind(puzzle)
+	word_note.closed.connect(_restore_cassette_controls)
 	fragment_panel = preload("res://scripts/fragment_panel.gd").new()
 	ui.add_child(fragment_panel)
 	fragment_panel.bind(puzzle)
-	fragment_panel.closed.connect(func():
-		if ending_started: return
-		inspector.enabled = true
-		actions.show()
-		timeline.visible = inspector.selected != null and inspector.selected.object_id == "cassette")
+	fragment_panel.closed.connect(_restore_cassette_controls)
 	$Objects/Tamagotchi.sequence = $Objects/Tamagotchi.sequence.duplicate()
 	$Objects/Tamagotchi.sequence.values = PackedStringArray(puzzle.data.correct_order)
 	$Objects/Tamagotchi._update_screen()
+
+func _restore_cassette_controls() -> void:
+	if ending_started: return
+	inspector.enabled = true
+	actions.show()
+	timeline.visible = inspector.selected != null and inspector.selected.object_id == "cassette"
+
+func _open_word_note() -> void:
+	if ending_started or rewinder.active or not puzzle.can_note(): return
+	inspector.enabled = false
+	inspector.dragging = false
+	actions.hide()
+	timeline.hide()
+	word_note.open_note()
 
 func _open_fragments() -> void:
 	if ending_started: return
@@ -150,14 +159,14 @@ func _selection_changed(object: Node3D) -> void:
 	if object.object_id == "pencil":
 		UI.button(actions, "USE ON CASSETTE", _use_pencil)
 	if object.object_id == "cassette":
+		note_button = UI.button(actions,"NOTE WORD",_open_word_note)
 		UI.button(actions,"ARRANGE FRAGMENTS",_open_fragments)
-		instructions.text = "PLAY / PAUSE here. Use the pencil to rewind or advance. ESC returns."
+		instructions.text = "Listen, PAUSE, then NOTE WORD. Use the pencil to find the moment again."
 		if pencil_selected:
 			UI.button(actions, "INSERT PENCIL", _begin_rewind)
 	if object.object_id == "sketchbook":
 		UI.button(actions, "OPEN / CLOSE", func(): object.set_open(not object.opened))
-		UI.button(actions, "< PAGE", func(): object.turn_page(-1))
-		UI.button(actions, "PAGE >", func(): object.turn_page(1))
+		instructions.text = "Open the book. Drag a lit outer page corner across the spine. ESC returns."
 	if object.object_id == "tamagotchi":
 		instructions.text = "Click its three physical buttons / drag shell to rotate / ESC returns"
 
@@ -185,6 +194,7 @@ func _stop_rewind() -> void:
 	camera.inspect_at($Objects/Cassette.global_position, $Objects/Cassette.inspect_distance)
 
 func _process(_delta: float) -> void:
+	if is_instance_valid(note_button): note_button.disabled = puzzle == null or not puzzle.can_note()
 	timeline.manual_mode = rewinder != null and rewinder.active
 	if rewinder != null and rewinder.active:
 		var center: Vector2 = rewinder.center_on_screen()
