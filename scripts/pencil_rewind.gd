@@ -51,6 +51,7 @@ func center_on_screen() -> Vector2:
 	return camera.unproject_position(reel.global_position)
 
 func start_drag(cursor: Vector2) -> void:
+	tape.pause()
 	holding = true
 	angle_valid = false
 	last_event_usec = Time.get_ticks_usec()
@@ -97,11 +98,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed: start_drag(event.position)
 		else: release()
-	elif event is InputEventMouseMotion and holding:
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT: release()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		release()
+	elif active and holding and event is InputEventMouseMotion:
+		# Continue a held circle over the timeline; GUI controls must not eat its arc.
 		var now := Time.get_ticks_usec()
 		var delta := clampf(float(now - last_event_usec) / 1000000.0, 0.001, 0.1)
 		last_event_usec = now
 		drag_to(event.position, delta)
-
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_FOCUS_OUT: release()
+		get_viewport().set_input_as_handled()

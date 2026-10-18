@@ -62,6 +62,13 @@ func advance(delta: float) -> void:
 		var time := float(marker.get("time", -1.0))
 		if previous < time and position_seconds >= time:
 			timestamp_reached.emit(str(marker.get("id", "")))
+	# A long frame may cross an entire short region; still notify both boundaries.
+	for region in data.regions:
+		var start := float(region.get("start", 0.0))
+		var end := float(region.get("end", 0.0))
+		if previous < start and position_seconds >= end and end > start:
+			region_entered.emit(str(region.get("id", "")))
+			region_exited.emit(str(region.get("id", "")))
 	_update_regions()
 	position_changed.emit(position_seconds, duration)
 	if position_seconds >= duration: _finish()

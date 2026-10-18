@@ -38,3 +38,31 @@
   fade transitions, exact requested five-line intro, typewriter reveal/advance/skip.
 - Behavioral checks pass for page navigation/closing, pet state/sequence wrapping,
   menu startup, introduction advance/reveal, and skip-to-tabletop.
+
+## Phases 9–11 — audio foundation, ending and existing PSX integration
+- Tape data accepts real streams/paths or simulated duration, pitch, optional
+  distortion/reverb, timestamp and region events (including frame skips), and a
+  future fragment-collection/order API. No final audio puzzle is authored.
+- F9 / clearly labelled DEBUG button runs the rear-noise, door-turn/open, synthetic
+  shot, red flash, camera fall, muffling, image distress, fade and menu-return flow.
+- Existing addon shaders are referenced directly; mild vertex wobble and nearest
+  pixels, one final color/dither pass, UI on a separate later canvas layer.
+- Verified all 95 pre-existing addon files against the safety manifest: unchanged.
+- Renderer screenshots reviewed for menu, introduction, tabletop, all four objects,
+  inserted pencil, door and ending. Corrected pencil clipping, dark cassette body,
+  rear-door visibility, and gesture release/continuation over UI controls.
+
+## Phase 12 — full validation
+- 22 GDScript files pass MCP validation. All 9 scene references pass validation.
+- Graphical 4.7.2 GL Compatibility regression run: 70 checks, zero failures; no
+  errors or warnings in the renderer log. Native audio play/seek/pause/resume tested
+  with a silent WAV stream as well as the simulated transport.
+- Actual pointer raycasts tested for all objects and all three physical pet buttons.
+- Editor MCP error list: 0. Backup ZIP integrity verified.
+- Sandbox-only headless runs report Windows certificate-store access restrictions;
+  one headless audio teardown warned about ObjectDB cleanup. Neither appears in the
+  final graphical run outside that sandbox.
+- Remaining content is intentional: primitive models, temporary pages/symbols,
+  simulated recording, synthetic cinematic cues, font fallback, and debug ending.
+  Final recordings, mystery clues, solution, artwork and 10–15 minute pacing are
+  not authored in this mechanical foundation.

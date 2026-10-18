@@ -27,7 +27,7 @@ class Scene:
     def mat(self,rgb):
         return self.resource('StandardMaterial3D',albedo_color='Color('+','.join(map(str,(*rgb,1)))+')',roughness=.9)
     def box(self,name,parent,pos,size,material):
-        mesh=self.resource('BoxMesh',size=v(size))
+        mesh=self.resource('BoxMesh',size=v(size),subdivide_width=12 if name=='Tabletop' else 0,subdivide_depth=10 if name=='Tabletop' else 0)
         return self.node(name,'MeshInstance3D',parent,position=v(pos),mesh=mesh,material_override=material)
     def save(self,path):
         p=ROOT/path; p.parent.mkdir(parents=True,exist_ok=True)
@@ -37,30 +37,38 @@ def v(values): return 'Vector3('+','.join(map(str,values))+')'
 def tabletop():
     s=Scene(); camera=s.external('Script','scripts/tabletop_camera.gd')
     game=s.external('Script','scripts/tabletop.gd'); inspect=s.external('Script','scripts/inspect_controller.gd')
-    wood=s.mat((.29,.15,.072)); black=s.mat((.012,.016,.018)); door=s.mat((.12,.08,.065))
+    wood=s.mat((.29,.15,.072)); black=s.mat((.012,.016,.018)); door=s.mat((.40,.29,.17)); trim=s.mat((.21,.20,.17))
     s.node('TabletopScene','Node3D',None,script=game)
     s.box('Tabletop','.',(0,-.16,0),(8,.3,6),wood)
     s.box('Floor','.',(0,-1.6,0),(14,.1,14),black)
     s.box('BackWall','.',(0,.3,5.5),(10,4,.15),black)
     pivot=s.node('DoorPivot','Node3D',position=v((-1,.0,5.35)))
     s.box('Door',pivot,(.6,-.1,0),(1.2,2.8,.12),door)
+    s.box('DoorFrameLeft','.',(-1.08,-.1,5.27),(.12,2.98,.19),trim)
+    s.box('DoorFrameRight','.',(.28,-.1,5.27),(.12,2.98,.19),trim)
+    s.box('DoorFrameTop','.',(-.4,1.39,5.27),(1.48,.12,.19),trim)
+    s.box('DoorHandle',pivot,(1.05,-.05,-.09),(.07,.08,.08),trim)
     env=s.resource('Environment',background_mode=1,background_color='Color(.008,.009,.014,1)',ambient_light_source=3,ambient_light_color='Color(.48,.43,.36,1)',ambient_light_energy=.45)
     s.node('Environment','WorldEnvironment',environment=env)
     s.node('TableLight','OmniLight3D',position=v((-.3,3,0)),light_color='Color(1,.73,.44,1)',light_energy=2.2,omni_range=7.0)
     s.node('RimLight','OmniLight3D',position=v((2,2,-2)),light_color='Color(.38,.46,.65,1)',light_energy=.55,omni_range=6.0)
+    s.node('DoorLight','OmniLight3D',position=v((-.4,1.5,4.4)),light_color='Color(.52,.61,.72,1)',light_energy=2.5,omni_range=5.0)
     s.node('TabletopCamera','Camera3D',script=camera,current=True,fov=42.0,near=.03)
     s.node('Objects','Node3D')
     for name,position in [('Cassette',(-2.15,.10,-1.05)),('Pencil',(-2.45,.11,1.45)),('Sketchbook',(2.25,.1,-1.35)),('Tamagotchi',(2.5,.12,1.55))]:
         ref=s.external('PackedScene','scenes/objects/'+name.lower()+'.tscn')
         s.instance(name,ref,'Objects',position=v(position))
     s.node('InspectController','Node',script=inspect,camera_path='NodePath("../TabletopCamera")')
+    retro=s.external('Script','scripts/retro_presentation.gd')
+    s.node('RetroPresentation','Node',script=retro)
     s.save('scenes/tabletop.tscn')
 
 def objects():
     for name, size in [('Cassette',(.95,.18,.62)),('Pencil',(1.1,.13,.14)),('Sketchbook',(1.0,.16,1.2)),('Tamagotchi',(.62,.18,.75))]:
         s=Scene(); script=s.external('Script','scripts/'+({'Cassette':'cassette','Sketchbook':'sketchbook','Tamagotchi':'tamagotchi'}.get(name,'interactable'))+'.gd')
-        black=s.mat((.035,.04,.04)); paper=s.mat((.69,.64,.48)); red=s.mat((.26,.055,.07)); green=s.mat((.30,.40,.21))
-        s.node(name,'StaticBody3D',None,script=script,object_id='"'+name.lower()+'"',display_name='"'+name.upper()+'"',collision_layer=2,collision_mask=0,inspect_distance=1.45 if name=='Sketchbook' else 1.2)
+        black=s.mat((.15,.16,.16)); paper=s.mat((.69,.64,.48)); red=s.mat((.26,.055,.07)); green=s.mat((.30,.40,.21))
+        distance={'Sketchbook':1.9,'Cassette':1.55,'Pencil':1.35,'Tamagotchi':1.25}[name]
+        s.node(name,'StaticBody3D',None,script=script,object_id='"'+name.lower()+'"',display_name='"'+name.upper()+'"',collision_layer=2,collision_mask=0,inspect_distance=distance)
         shape=s.resource('BoxShape3D',size=v(size))
         s.node('Collision','CollisionShape3D',shape=shape)
         s.node('Visual','Node3D',rotation=v((0,0,1.5707963)) if name=='Pencil' else v((0,0,0)))
@@ -74,6 +82,8 @@ def objects():
                 reel=s.node('Reel'+side,'Node3D','Visual',position=v((x,.085,.035)))
                 disk=s.resource('CylinderMesh',top_radius=.13,bottom_radius=.13,height=.015,radial_segments=12)
                 s.node('ReelMesh','MeshInstance3D',reel,mesh=disk,material_override=paper)
+                hole=s.resource('CylinderMesh',top_radius=.048,bottom_radius=.048,height=.018,radial_segments=6)
+                s.node('Hole','MeshInstance3D',reel,position=v((0,.013,0)),mesh=hole,material_override=black)
                 s.box('Spoke',reel,(0,.015,0),(.025,.015,.20),black)
             s.node('PencilSocket','Marker3D','Visual/ReelLeft',position=v((0,.02,0)))
         elif name=='Pencil':
@@ -107,6 +117,8 @@ def menu():
     env=s.resource('Environment',background_mode=1,background_color='Color(.006,.007,.011,1)',ambient_light_source=3,ambient_light_energy=.35)
     s.node('Environment','WorldEnvironment',environment=env)
     s.node('Light','OmniLight3D',position=v((-.8,2,1)),light_color='Color(1,.72,.43,1)',light_energy=2.0,omni_range=7.0)
+    retro=s.external('Script','scripts/retro_presentation.gd')
+    s.node('RetroPresentation','Node',script=retro)
     s.save('scenes/main_menu.tscn')
     s=Scene(); script=s.external('Script','scripts/intro_sequence.gd')
     s.node('IntroSequence','Control',None,script=script)

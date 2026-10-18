@@ -12,6 +12,11 @@ func _ready() -> void:
 	theme = UI.make_theme()
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var background := ColorRect.new()
+	background.color = Color(.006,.007,.01,1.0)
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(background)
 	body = UI.label(self, "", 26)
 	body.position = Vector2(100,215)
 	body.size = Vector2(760,120)

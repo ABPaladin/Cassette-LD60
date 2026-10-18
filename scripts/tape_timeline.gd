@@ -23,6 +23,22 @@ func bind(controller: Node) -> void:
 	slider.max_value = tape.duration
 	slider.step = .01
 	slider.focus_mode = Control.FOCUS_NONE
+	slider.tick_count = 13
+	slider.ticks_on_borders = true
+	var track := StyleBoxFlat.new()
+	track.bg_color = Color(.21,.17,.11)
+	track.content_margin_top = 2
+	track.content_margin_bottom = 2
+	slider.add_theme_stylebox_override("slider", track)
+	var ink := Gradient.new()
+	ink.set_color(0,Color(.8,.72,.51))
+	ink.set_color(1,Color(.8,.72,.51))
+	var knob := GradientTexture2D.new()
+	knob.gradient = ink
+	knob.width = 6
+	knob.height = 14
+	slider.add_theme_icon_override("grabber", knob)
+	slider.add_theme_icon_override("grabber_highlight", knob)
 	column.add_child(slider)
 	slider.value_changed.connect(func(value): tape.seek(value))
 

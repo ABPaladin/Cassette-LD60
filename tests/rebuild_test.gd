@@ -16,6 +16,10 @@ func _run() -> void:
 	await process_frame
 	var camera = scene.get_node("TabletopCamera")
 	camera.set_process(false)
+	var visible_objects := 0
+	for object in scene.get_node("Objects").get_children():
+		if camera.is_position_in_frustum(object.global_position): visible_objects += 1
+	check(visible_objects < 4, "Initial framing requires exploration rather than showing every object")
 	var original: Vector3 = camera.position
 	camera.step_camera(0.1, Vector2(1,0))
 	check(camera.focus.x > 0 and camera.focus.z < .25, "Cursor upper-right pans across table")
@@ -33,7 +37,10 @@ func _run() -> void:
 	for object in scene.get_node("Objects").get_children():
 		var rest: Transform3D = object.global_transform
 		inspector.select(object)
+		camera.step_camera(2.0,Vector2(.5,.5))
 		await create_timer(.4).timeout
+		var pixel: Vector2 = camera.unproject_position(object.global_position)
+		check(inspector.pick(pixel) == object, object.name + " can be raycast from the inspection view")
 		check(object.global_position.y > rest.origin.y, object.name + " lifts into inspection")
 		var previous: Basis = object.visual.basis
 		object.rotate_model(Vector2(30,20))
@@ -62,6 +69,25 @@ func _run() -> void:
 	check(not tape.playing and tape.position_seconds == tape.duration, "Completion clamps and stops")
 	tape.seek(-20.0)
 	check(tape.position_seconds == 0.0, "Seek cannot underflow")
+	var marks: Array[String] = []
+	tape.timestamp_reached.connect(func(id): marks.append(id))
+	tape.seek(59.5)
+	tape.play()
+	tape.advance(1.0)
+	check(marks == ["development_mark"], "Playback emits configured timestamp event")
+	tape.pause()
+	tape.collect_fragment("test-a")
+	tape.collect_fragment("test-b")
+	var valid_order: Array[String] = ["test-b","test-a"]
+	var invalid_order: Array[String] = ["unknown"]
+	check(tape.set_fragment_order(valid_order) and not tape.set_fragment_order(invalid_order), "Fragment API accepts owned fragments without a hardcoded solution")
+	var entered: Array[String] = []
+	tape.region_entered.connect(func(id): entered.append(id))
+	tape.seek(29.0)
+	tape.play()
+	tape.advance(8.0)
+	check(entered == ["development_region"], "Long frame still emits crossed region entry")
+	tape.pause()
 	inspector.select(scene.get_node("Objects/Pencil"))
 	scene._use_pencil()
 	await create_timer(.5).timeout
@@ -81,6 +107,22 @@ func _run() -> void:
 	rewind.release()
 	rewind.drag_to(center+Vector2(0,90),1.0)
 	check(absf(tape.position_seconds - 60.0) < .05, "Released mouse cannot seek")
+	rewind.start_drag(center+Vector2(90,0))
+	var before_limit: float = tape.position_seconds
+	rewind.drag_to(center+Vector2(-90,0),.001)
+	check(absf(tape.position_seconds-before_limit) <= rewind.maximum_seek_speed*.001+.001, "Gesture seek rate is capped")
+	rewind.release()
+	rewind.invert_direction = true
+	rewind.start_drag(center+Vector2(90,0))
+	var before_invert: float = tape.position_seconds
+	rewind.drag_to(center+Vector2(0,90),1.0)
+	check(tape.position_seconds > before_invert, "Direction inversion changes seek direction")
+	var released := InputEventMouseButton.new()
+	released.button_index = MOUSE_BUTTON_LEFT
+	released.pressed = false
+	rewind._input(released)
+	check(not rewind.holding, "Mouse release over GUI cancels circular gesture")
+	rewind.release()
 	inspector.leave()
 	check(not rewind.active and scene.get_node("Objects/Pencil").visible, "Leaving rewind restores pencil")
 	var book = scene.get_node("Objects/Sketchbook")
@@ -105,6 +147,19 @@ func _run() -> void:
 	check(pet.current_value() == "00", "Pet previous button reverses sequence")
 	pet.press_button(0)
 	check(pet.current_value() == "56", "Pet wraps configurable sequence")
+	camera.step_camera(2.0,Vector2(.5,.5))
+	await create_timer(.4).timeout
+	for index in range(3):
+		var button: Node3D = pet.get_node("Visual/Button%d" % index)
+		var pixel: Vector2 = camera.unproject_position(button.global_position + Vector3.UP * .025)
+		check(pet.button_at(pixel,camera) == index, "Physical raycast reaches pet button %d" % index)
+		var click := InputEventMouseButton.new()
+		click.button_index = MOUSE_BUTTON_LEFT
+		click.pressed = true
+		click.position = pixel
+		var before: int = pet.press_count
+		pet._input(click)
+		check(pet.press_count == before + 1, "Pet button %d responds to mouse input" % index)
 	inspector.leave()
 	scene.queue_free()
 	await process_frame
@@ -123,6 +178,38 @@ func _run() -> void:
 	intro.skip()
 	await create_timer(.08).timeout
 	check(game.state == "tabletop", "Skip transitions to new tabletop scene")
+	var ending = game.content.ending
+	ending.timing_scale = .02
+	game.content._debug_ending()
+	await create_timer(.4).timeout
+	check(ending.complete and ending.stage == "end", "Debug ending completes every timed stage")
+	check(game.content.get_node("DoorPivot").rotation.y > 1.0, "Ending opens rear door")
+	check(game.content.camera.position.y < 0.0, "Ending camera falls to floor")
+	check(not game.content.get_node("Objects/Cassette/TapeAudioController").playing, "Ending stops cassette")
+	ending.finished.emit()
+	await create_timer(.08).timeout
+	check(game.state == "menu", "Ending returns to main menu")
+	# Exercise the same transport with an actual native audio stream, not just its clock.
+	var native = preload("res://scripts/tape_audio_controller.gd").new()
+	native.data = preload("res://resources/test_tape.tres").duplicate(true)
+	var audio := AudioStreamWAV.new()
+	audio.format = AudioStreamWAV.FORMAT_16_BITS
+	audio.mix_rate = 22050
+	var samples := PackedByteArray()
+	samples.resize(22050*2*4)
+	audio.data = samples
+	native.data.recording = audio
+	root.add_child(native)
+	native.set_process(false)
+	native.play()
+	check(native.player.playing and native.duration == 4.0, "Configured native audio stream plays and supplies duration")
+	native.seek(1.5)
+	check(native.position_seconds == 1.5 and native.player.playing, "Native stream supports seek during playback")
+	native.pause()
+	check(not native.player.playing, "Native audio pauses")
+	native.play()
+	check(native.player.playing and native.position_seconds == 1.5, "Native audio resumes at held time")
+	native.queue_free()
 	game.queue_free()
 	await process_frame
 	print("REBUILD TESTS: ",failures," failures")

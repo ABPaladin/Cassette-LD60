@@ -67,5 +67,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion and selected != null and dragging and rotation_enabled:
 		selected.rotate_model(event.relative)
 
+func _input(event: InputEvent) -> void:
+	# Releases and exit gestures must work even over a GUI button or timeline.
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		dragging = false
+	if not enabled or selected == null: return
+	if (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE) or (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT):
+		leave()
+		get_viewport().set_input_as_handled()
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT: dragging = false

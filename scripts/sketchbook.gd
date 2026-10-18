@@ -12,7 +12,7 @@ func _ready() -> void:
 	page_label = Label3D.new()
 	page_label.font = preload("res://resources/interface_font.tres")
 	page_label.font_size = 28
-	page_label.pixel_size = .0017
+	page_label.pixel_size = .0021
 	page_label.outline_size = 0
 	page_label.modulate = Color(.12,.10,.09)
 	page_label.rotation.x = -PI / 2.0

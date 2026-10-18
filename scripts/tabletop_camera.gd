@@ -6,7 +6,7 @@ extends Camera3D
 @export var movement_limits := Vector2(2.15, 1.35)
 @export var smoothing := 6.0
 @export var table_offset := Vector3(0.0, 3.4, 2.7)
-@export var inspection_offset := Vector3(0.0, 0.85, 1.3)
+@export var inspection_offset := Vector3(0.0, 1.35, 0.95)
 @export var zoom_limits := Vector2(0.65, 2.5)
 var focus := Vector3(0.0, 0.0, 0.25)
 var saved_focus := Vector3.ZERO
@@ -15,6 +15,7 @@ var inspect_distance := 1.3
 var inspecting := false
 var controls_enabled := true
 var cinematic := false
+var return_cooldown := 0.0
 
 func _ready() -> void:
 	position = focus + table_offset
@@ -26,7 +27,8 @@ func _process(delta: float) -> void:
 	step_camera(delta, get_viewport().get_mouse_position() / size)
 
 func step_camera(delta: float, cursor: Vector2) -> void:
-	if controls_enabled and not inspecting:
+	return_cooldown = maxf(0.0, return_cooldown - delta)
+	if controls_enabled and not inspecting and return_cooldown <= 0.0:
 		var motion := Vector2(_edge(cursor.x), _edge(cursor.y))
 		focus += Vector3(motion.x, 0.0, motion.y) * delta * pan_speed * movement_strength
 		focus.x = clampf(focus.x, -movement_limits.x, movement_limits.x)
@@ -45,6 +47,7 @@ func inspect_at(point: Vector3, distance: float) -> void:
 func return_to_table() -> void:
 	focus = saved_focus
 	inspecting = false
+	return_cooldown = .65
 
 func zoom(amount: float) -> void:
 	inspect_distance = clampf(inspect_distance + amount, zoom_limits.x, zoom_limits.y)

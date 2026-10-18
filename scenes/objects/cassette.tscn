@@ -1,11 +1,11 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/cassette.gd" id="1"]
 
 [ext_resource type="Script" path="res://scripts/tape_audio_controller.gd" id="2"]
 
 [sub_resource type="StandardMaterial3D" id="1"]
-albedo_color = Color(0.035,0.04,0.04,1)
+albedo_color = Color(0.15,0.16,0.16,1)
 roughness = 0.9
 
 [sub_resource type="StandardMaterial3D" id="2"]
@@ -25,9 +25,13 @@ size = Vector3(0.95,0.18,0.62)
 
 [sub_resource type="BoxMesh" id="6"]
 size = Vector3(0.95,0.12,0.62)
+subdivide_width = 0
+subdivide_depth = 0
 
 [sub_resource type="BoxMesh" id="7"]
 size = Vector3(0.84,0.01,0.17)
+subdivide_width = 0
+subdivide_depth = 0
 
 [sub_resource type="CylinderMesh" id="8"]
 top_radius = 0.13
@@ -35,17 +39,33 @@ bottom_radius = 0.13
 height = 0.015
 radial_segments = 12
 
-[sub_resource type="BoxMesh" id="9"]
-size = Vector3(0.025,0.015,0.2)
+[sub_resource type="CylinderMesh" id="9"]
+top_radius = 0.048
+bottom_radius = 0.048
+height = 0.018
+radial_segments = 6
 
-[sub_resource type="CylinderMesh" id="10"]
+[sub_resource type="BoxMesh" id="10"]
+size = Vector3(0.025,0.015,0.2)
+subdivide_width = 0
+subdivide_depth = 0
+
+[sub_resource type="CylinderMesh" id="11"]
 top_radius = 0.13
 bottom_radius = 0.13
 height = 0.015
 radial_segments = 12
 
-[sub_resource type="BoxMesh" id="11"]
+[sub_resource type="CylinderMesh" id="12"]
+top_radius = 0.048
+bottom_radius = 0.048
+height = 0.018
+radial_segments = 6
+
+[sub_resource type="BoxMesh" id="13"]
 size = Vector3(0.025,0.015,0.2)
+subdivide_width = 0
+subdivide_depth = 0
 
 [node name="Cassette" type="StaticBody3D"]
 script = ExtResource("1")
@@ -53,7 +73,7 @@ object_id = "cassette"
 display_name = "CASSETTE"
 collision_layer = 2
 collision_mask = 0
-inspect_distance = 1.2
+inspect_distance = 1.55
 
 [node name="Collision" type="CollisionShape3D" parent="."]
 shape = SubResource("5")
@@ -84,21 +104,31 @@ position = Vector3(-0.22,0.085,0.035)
 mesh = SubResource("8")
 material_override = SubResource("2")
 
+[node name="Hole" type="MeshInstance3D" parent="Visual/ReelLeft"]
+position = Vector3(0,0.013,0)
+mesh = SubResource("9")
+material_override = SubResource("1")
+
 [node name="Spoke" type="MeshInstance3D" parent="Visual/ReelLeft"]
 position = Vector3(0,0.015,0)
-mesh = SubResource("9")
+mesh = SubResource("10")
 material_override = SubResource("1")
 
 [node name="ReelRight" type="Node3D" parent="Visual"]
 position = Vector3(0.22,0.085,0.035)
 
 [node name="ReelMesh" type="MeshInstance3D" parent="Visual/ReelRight"]
-mesh = SubResource("10")
+mesh = SubResource("11")
 material_override = SubResource("2")
+
+[node name="Hole" type="MeshInstance3D" parent="Visual/ReelRight"]
+position = Vector3(0,0.013,0)
+mesh = SubResource("12")
+material_override = SubResource("1")
 
 [node name="Spoke" type="MeshInstance3D" parent="Visual/ReelRight"]
 position = Vector3(0,0.015,0)
-mesh = SubResource("11")
+mesh = SubResource("13")
 material_override = SubResource("1")
 
 [node name="PencilSocket" type="Marker3D" parent="Visual/ReelLeft"]

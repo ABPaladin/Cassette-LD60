@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=22 format=3]
 
 [ext_resource type="Script" path="res://scripts/tabletop_camera.gd" id="1"]
 
@@ -14,6 +14,8 @@
 
 [ext_resource type="PackedScene" path="res://scenes/objects/tamagotchi.tscn" id="7"]
 
+[ext_resource type="Script" path="res://scripts/retro_presentation.gd" id="8"]
+
 [sub_resource type="StandardMaterial3D" id="1"]
 albedo_color = Color(0.29,0.15,0.072,1)
 roughness = 0.9
@@ -23,22 +25,54 @@ albedo_color = Color(0.012,0.016,0.018,1)
 roughness = 0.9
 
 [sub_resource type="StandardMaterial3D" id="3"]
-albedo_color = Color(0.12,0.08,0.065,1)
+albedo_color = Color(0.4,0.29,0.17,1)
 roughness = 0.9
 
-[sub_resource type="BoxMesh" id="4"]
-size = Vector3(8,0.3,6)
+[sub_resource type="StandardMaterial3D" id="4"]
+albedo_color = Color(0.21,0.2,0.17,1)
+roughness = 0.9
 
 [sub_resource type="BoxMesh" id="5"]
-size = Vector3(14,0.1,14)
+size = Vector3(8,0.3,6)
+subdivide_width = 12
+subdivide_depth = 10
 
 [sub_resource type="BoxMesh" id="6"]
-size = Vector3(10,4,0.15)
+size = Vector3(14,0.1,14)
+subdivide_width = 0
+subdivide_depth = 0
 
 [sub_resource type="BoxMesh" id="7"]
-size = Vector3(1.2,2.8,0.12)
+size = Vector3(10,4,0.15)
+subdivide_width = 0
+subdivide_depth = 0
 
-[sub_resource type="Environment" id="8"]
+[sub_resource type="BoxMesh" id="8"]
+size = Vector3(1.2,2.8,0.12)
+subdivide_width = 0
+subdivide_depth = 0
+
+[sub_resource type="BoxMesh" id="9"]
+size = Vector3(0.12,2.98,0.19)
+subdivide_width = 0
+subdivide_depth = 0
+
+[sub_resource type="BoxMesh" id="10"]
+size = Vector3(0.12,2.98,0.19)
+subdivide_width = 0
+subdivide_depth = 0
+
+[sub_resource type="BoxMesh" id="11"]
+size = Vector3(1.48,0.12,0.19)
+subdivide_width = 0
+subdivide_depth = 0
+
+[sub_resource type="BoxMesh" id="12"]
+size = Vector3(0.07,0.08,0.08)
+subdivide_width = 0
+subdivide_depth = 0
+
+[sub_resource type="Environment" id="13"]
 background_mode = 1
 background_color = Color(0.008,0.009,0.014,1)
 ambient_light_source = 3
@@ -50,17 +84,17 @@ script = ExtResource("2")
 
 [node name="Tabletop" type="MeshInstance3D" parent="."]
 position = Vector3(0,-0.16,0)
-mesh = SubResource("4")
+mesh = SubResource("5")
 material_override = SubResource("1")
 
 [node name="Floor" type="MeshInstance3D" parent="."]
 position = Vector3(0,-1.6,0)
-mesh = SubResource("5")
+mesh = SubResource("6")
 material_override = SubResource("2")
 
 [node name="BackWall" type="MeshInstance3D" parent="."]
 position = Vector3(0,0.3,5.5)
-mesh = SubResource("6")
+mesh = SubResource("7")
 material_override = SubResource("2")
 
 [node name="DoorPivot" type="Node3D" parent="."]
@@ -68,11 +102,31 @@ position = Vector3(-1,0.0,5.35)
 
 [node name="Door" type="MeshInstance3D" parent="DoorPivot"]
 position = Vector3(0.6,-0.1,0)
-mesh = SubResource("7")
+mesh = SubResource("8")
 material_override = SubResource("3")
 
+[node name="DoorFrameLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-1.08,-0.1,5.27)
+mesh = SubResource("9")
+material_override = SubResource("4")
+
+[node name="DoorFrameRight" type="MeshInstance3D" parent="."]
+position = Vector3(0.28,-0.1,5.27)
+mesh = SubResource("10")
+material_override = SubResource("4")
+
+[node name="DoorFrameTop" type="MeshInstance3D" parent="."]
+position = Vector3(-0.4,1.39,5.27)
+mesh = SubResource("11")
+material_override = SubResource("4")
+
+[node name="DoorHandle" type="MeshInstance3D" parent="DoorPivot"]
+position = Vector3(1.05,-0.05,-0.09)
+mesh = SubResource("12")
+material_override = SubResource("4")
+
 [node name="Environment" type="WorldEnvironment" parent="."]
-environment = SubResource("8")
+environment = SubResource("13")
 
 [node name="TableLight" type="OmniLight3D" parent="."]
 position = Vector3(-0.3,3,0)
@@ -85,6 +139,12 @@ position = Vector3(2,2,-2)
 light_color = Color(0.38,0.46,0.65,1)
 light_energy = 0.55
 omni_range = 6.0
+
+[node name="DoorLight" type="OmniLight3D" parent="."]
+position = Vector3(-0.4,1.5,4.4)
+light_color = Color(0.52,0.61,0.72,1)
+light_energy = 2.5
+omni_range = 5.0
 
 [node name="TabletopCamera" type="Camera3D" parent="."]
 script = ExtResource("1")
@@ -110,3 +170,6 @@ position = Vector3(2.5,0.12,1.55)
 [node name="InspectController" type="Node" parent="."]
 script = ExtResource("3")
 camera_path = NodePath("../TabletopCamera")
+
+[node name="RetroPresentation" type="Node" parent="."]
+script = ExtResource("8")
