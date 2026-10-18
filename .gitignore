@@ -3,3 +3,4 @@
 artifacts/
 *.log
 __pycache__/
+build/

@@ -16,6 +16,8 @@ func _ready() -> void:
 	curtain.color = Color(0,0,0,0)
 	layer.add_child(curtain)
 	_show_menu()
+	if OS.has_feature("web_qa") and OS.has_feature("web"):
+		add_child(preload("res://scripts/web_test_probe.gd").new())
 
 func _replace(path: String, next_state: String) -> Node:
 	if is_instance_valid(content):
