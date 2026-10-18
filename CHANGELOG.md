@@ -28,3 +28,13 @@
 - Tests pass for all four inspection round trips, transport states, regions, one
   complete 12-second rewind turn, reverse turn across +/-PI, release and cleanup.
 - No mystery audio, solution, cassette player or final code has been implemented.
+
+## Phases 5–8 — book, pet, menu and introduction
+- Sketchbook remains a 3D model: hinged cover, three page resources, next/previous,
+  bounded page index, close-on-return; each page accepts a replacement texture.
+- Tamagotchi has three physical raycast buttons, press animation, number/select
+  screen states, and an external configurable symbol sequence.
+- New 3D cassette menu, shared replaceable font resource, START/QUIT, scene manager,
+  fade transitions, exact requested five-line intro, typewriter reveal/advance/skip.
+- Behavioral checks pass for page navigation/closing, pet state/sequence wrapping,
+  menu startup, introduction advance/reveal, and skip-to-tabletop.

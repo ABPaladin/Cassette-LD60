@@ -1,0 +1,6 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/book_page.gd" id="1"]
+[resource]
+script = ExtResource("1")
+title = "Drawings"
+text = "    +--------+\n    |   /\\   |\n    |  /  \\  |\n    | /____\\ |\n    +--------+\n\n   O    []    /\\\n\nArtist sketches\nwill go here."

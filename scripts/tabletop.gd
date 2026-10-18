@@ -60,6 +60,12 @@ func _selection_changed(object: Node3D) -> void:
 		UI.button(actions, "USE ON CASSETTE", _use_pencil)
 	if object.object_id == "cassette" and pencil_selected:
 		UI.button(actions, "INSERT PENCIL", _begin_rewind)
+	if object.object_id == "sketchbook":
+		UI.button(actions, "OPEN / CLOSE", func(): object.set_open(not object.opened))
+		UI.button(actions, "< PAGE", func(): object.turn_page(-1))
+		UI.button(actions, "PAGE >", func(): object.turn_page(1))
+	if object.object_id == "tamagotchi":
+		instructions.text = "Click its three physical buttons / drag shell to rotate / ESC returns"
 
 func _use_pencil() -> void:
 	pencil_selected = true

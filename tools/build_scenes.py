@@ -58,7 +58,7 @@ def tabletop():
 
 def objects():
     for name, size in [('Cassette',(.95,.18,.62)),('Pencil',(1.1,.13,.14)),('Sketchbook',(1.0,.16,1.2)),('Tamagotchi',(.62,.18,.75))]:
-        s=Scene(); script=s.external('Script','scripts/cassette.gd' if name=='Cassette' else 'scripts/interactable.gd')
+        s=Scene(); script=s.external('Script','scripts/'+({'Cassette':'cassette','Sketchbook':'sketchbook','Tamagotchi':'tamagotchi'}.get(name,'interactable'))+'.gd')
         black=s.mat((.035,.04,.04)); paper=s.mat((.69,.64,.48)); red=s.mat((.26,.055,.07)); green=s.mat((.30,.40,.21))
         s.node(name,'StaticBody3D',None,script=script,object_id='"'+name.lower()+'"',display_name='"'+name.upper()+'"',collision_layer=2,collision_mask=0,inspect_distance=1.45 if name=='Sketchbook' else 1.2)
         shape=s.resource('BoxShape3D',size=v(size))
@@ -87,8 +87,8 @@ def objects():
             s.box('Cover','Visual/CoverPivot',(.5,0,0),(1,.045,1.2),red)
             s.node('PageSurface','Node3D','Visual',position=v((0,.03,0)))
         else:
-            egg=s.resource('SphereMesh',radius=.32,height=.75,radial_segments=10,rings=6)
-            s.node('Shell','MeshInstance3D',model,mesh=egg,material_override=paper,scale=v((1,.22,1)),rotation=v((1.5707963,0,0)))
+            egg=s.resource('SphereMesh',radius=.5,height=1.0,radial_segments=10,rings=6)
+            s.node('Shell','MeshInstance3D',model,mesh=egg,material_override=paper,scale=v((.62,.14,.75)))
             s.box('LCD','Visual',(0,.10,-.065),(.41,.02,.35),green)
             s.node('Screen','Label3D','Visual',position=v((0,.116,-.065)),rotation=v((-1.5707963,0,0)),text='"00"',font_size=48,pixel_size=.004,outline_size=0,modulate='Color(.04,.07,.02,1)')
             for i in range(3):
@@ -98,6 +98,24 @@ def objects():
                 s.node('Collision','CollisionShape3D',b,shape=shape)
         s.save('scenes/objects/'+name.lower()+'.tscn')
 
+def menu():
+    s=Scene(); script=s.external('Script','scripts/main_menu.gd')
+    cassette=s.external('PackedScene','scenes/objects/cassette.tscn')
+    s.node('MainMenu','Node3D',None,script=script)
+    s.instance('Cassette',cassette,scale=v((1.6,1.6,1.6)))
+    s.node('Camera3D','Camera3D',position=v((0,1.8,2.4)),current=True,fov=45.0)
+    env=s.resource('Environment',background_mode=1,background_color='Color(.006,.007,.011,1)',ambient_light_source=3,ambient_light_energy=.35)
+    s.node('Environment','WorldEnvironment',environment=env)
+    s.node('Light','OmniLight3D',position=v((-.8,2,1)),light_color='Color(1,.72,.43,1)',light_energy=2.0,omni_range=7.0)
+    s.save('scenes/main_menu.tscn')
+    s=Scene(); script=s.external('Script','scripts/intro_sequence.gd')
+    s.node('IntroSequence','Control',None,script=script)
+    s.save('scenes/intro_sequence.tscn')
+    s=Scene(); script=s.external('Script','scripts/game_manager.gd')
+    s.node('GameManager','Node',None,script=script)
+    s.save('scenes/game.tscn')
+
 if __name__=='__main__':
     if sys.argv[1]=='objects': objects()
     if sys.argv[1]=='tabletop': tabletop()
+    if sys.argv[1]=='menu': menu()

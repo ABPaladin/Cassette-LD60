@@ -1,0 +1,6 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/book_page.gd" id="1"]
+[resource]
+script = ExtResource("1")
+title = "Investigation"
+text = "00:--    --:--\n\n?  +  O  ?\n\n1 / 2 / 3\n\nUnsorted observations.\n\n[temporary markings]\nNo final code yet."

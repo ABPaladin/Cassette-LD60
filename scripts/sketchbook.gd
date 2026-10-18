@@ -1,0 +1,56 @@
+extends "res://scripts/interactable.gd"
+signal page_changed(index: int)
+@export var pages: Array[Resource] = [preload("res://resources/pages/notes.tres"), preload("res://resources/pages/drawings.tres"), preload("res://resources/pages/clues.tres")]
+var opened := false
+var page_index := 0
+var cover_tween: Tween
+var page_label: Label3D
+var page_art: Sprite3D
+
+func _ready() -> void:
+	super._ready()
+	page_label = Label3D.new()
+	page_label.font = preload("res://resources/interface_font.tres")
+	page_label.font_size = 28
+	page_label.pixel_size = .0017
+	page_label.outline_size = 0
+	page_label.modulate = Color(.12,.10,.09)
+	page_label.rotation.x = -PI / 2.0
+	$Visual/PageSurface.add_child(page_label)
+	page_art = Sprite3D.new()
+	page_art.rotation.x = -PI / 2.0
+	page_art.position.y = .003
+	page_art.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	$Visual/PageSurface.add_child(page_art)
+	_show_page()
+
+func set_open(value: bool) -> void:
+	opened = value
+	if cover_tween: cover_tween.kill()
+	cover_tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	cover_tween.tween_property($Visual/CoverPivot, "rotation:z", 2.75 if opened else 0.0, .4)
+	_show_page()
+
+func turn_page(direction: int) -> void:
+	if not opened or pages.is_empty(): return
+	page_index = clampi(page_index + direction, 0, pages.size() - 1)
+	_show_page()
+	page_changed.emit(page_index)
+	var flutter := create_tween()
+	flutter.tween_property($Visual/PageSurface, "position:y", .075, .10)
+	flutter.tween_property($Visual/PageSurface, "position:y", .03, .12)
+
+func _show_page() -> void:
+	$Visual/PageSurface.visible = opened
+	if pages.is_empty(): return
+	var page: Resource = pages[page_index]
+	page_label.text = page.title + "\n\n" + page.text + "\n\n— %d —" % (page_index + 1)
+	page_art.texture = page.artwork
+	page_art.visible = page.artwork != null
+	page_label.visible = page.artwork == null
+	if page.artwork != null:
+		page_art.pixel_size = minf(.86 / page.artwork.get_width(), 1.06 / page.artwork.get_height())
+
+func end_inspection() -> void:
+	set_open(false)
+	super.end_inspection()
