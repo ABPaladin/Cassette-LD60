@@ -36,7 +36,7 @@ func _build_ui() -> void:
 	layer.add_child(ui)
 	title = UI.label(ui, "GLORIA'S BELONGINGS / 1998", 20)
 	title.position = Vector2(24, 18)
-	instructions = UI.label(ui, "Move cursor to screen edges to explore. Click an object.", 16)
+	instructions = UI.label(ui, "Click an object to inspect it.", 16)
 	instructions.position = Vector2(24, 506)
 	actions = HBoxContainer.new()
 	actions.position = Vector2(24, 454)
@@ -60,7 +60,7 @@ func _selection_changed(object: Node3D) -> void:
 	for child in actions.get_children(): child.queue_free()
 	if object == null:
 		title.text = "GLORIA'S BELONGINGS / 1998"
-		instructions.text = "Move cursor to screen edges to explore. Click an object."
+		instructions.text = "Click an object to inspect it."
 		return
 	title.text = object.display_name
 	instructions.text = "Drag to rotate / wheel to zoom / ESC or right-click to return"

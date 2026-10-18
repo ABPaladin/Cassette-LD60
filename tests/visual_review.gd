@@ -21,15 +21,11 @@ func _run() -> void:
 	await create_timer(.3).timeout
 	var table = game.content
 	table.camera.set_process(false)
-	table.camera.focus = table.camera.home_focus
 	table.camera.step_camera(3.0,Vector2(.5,.5))
 	await shot("03-tabletop")
-	for id in ["Pencil", "Sketchbook", "Tamagotchi"]:
-		var object = table.get_node("Objects/" + id)
-		table.camera.focus = Vector3(clampf(object.position.x,-table.camera.movement_limits.x,table.camera.movement_limits.x),0,clampf(object.position.z,-table.camera.movement_limits.y,table.camera.movement_limits.y))
-		table.camera.step_camera(3.0,Vector2(.5,.5))
-		await shot("tabletop-" + id)
-	table.camera.focus = table.camera.home_focus
+	for cursor in [Vector2.ZERO,Vector2(1,0),Vector2(0,1),Vector2.ONE]:
+		table.camera.step_camera(3.0,cursor)
+		await shot("tabletop-cursor-%d-%d" % [int(cursor.x),int(cursor.y)])
 	table.camera.step_camera(3.0,Vector2(.5,.5))
 	for id in ["Cassette", "Pencil", "Sketchbook", "Tamagotchi"]:
 		var object = table.get_node("Objects/" + id)

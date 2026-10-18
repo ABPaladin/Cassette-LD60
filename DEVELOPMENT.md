@@ -7,8 +7,9 @@ Open `project.godot` with Godot **4.7.2** and press **F5**. The main scene is
 
 - START begins Gloria's introduction. Click/Space reveals or advances a line;
   Escape or SKIP bypasses it.
-- Move the cursor toward a screen edge to explore that part of the table. The
-  camera is elevated and bounded; there is no walking or mouse capture.
+- The elevated tabletop camera stays at a fixed position and FOV. Cursor movement
+  adds only subtle, smoothed rotation (horizontal +/-3 degrees, vertical +/-2).
+  Center the cursor to return to the neutral view; there is no edge-scrolling.
 - Click an object to lift and inspect it. Drag to rotate, wheel to zoom, Escape,
   right-click or RETURN to put it back and restore the previous tabletop view.
 - Cassette: PLAY/PAUSE and a read-only tape-position strip. Use circular pencil
@@ -35,7 +36,7 @@ Open `project.godot` with Godot **4.7.2** and press **F5**. The main scene is
 | `main_menu.tscn` | Single primitive 3D cassette, START and QUIT |
 | `intro_sequence.gd` | Five supplied lines, reveal speed, advance and skip |
 | `tabletop.tscn`, `tabletop.gd` | Environment, object instances, contextual controls |
-| `tabletop_camera.gd` | Edge pan, bounds, smoothing, inspection zoom and return |
+| `tabletop_camera.gd` | Fixed tabletop pose, subtle mouse-look, inspection zoom and return |
 | `inspect_controller.gd`, `interactable.gd` | Shared picking, hover, lift, drag, return |
 | `cassette.gd`, `tape_audio_controller.gd` | Reels, playback, seek, markers and audio bus |
 | `pencil_rewind.gd` | Wrapped angular gesture → real transport displacement |
@@ -67,10 +68,12 @@ fallback is used. Replace that resource with the supplied licensed font later.
 
 ## Tuning and future puzzle work
 
-Camera home focus, table offset, speed, strength, edge margin, limits, smoothing,
-inspection offset and zoom are exported on TabletopCamera. The close, steep view
-starts on the cassette; existing object placements are unchanged. Rewind
-sensitivity, seconds per turn, inversion,
+The TabletopCamera scene transform defines its fixed normal pose; FOV stays at
+42 degrees. Exported `horizontal_look_degrees`, `vertical_look_degrees` and
+`smoothing` tune the small local rotation. Inspection offset and zoom limits apply
+only to inspection. Returning restores the fixed position and previous look.
+The layout centers the cassette, with the pet upper-right, pencil below and book
+cropped at the left edge. Rewind sensitivity, seconds per turn, inversion,
 smoothing, dead radius and maximum seek speed are exported in `pencil_rewind.gd`.
 
 `resources/test_tape.tres` accepts a real `recording` or `recording_path`, fallback
@@ -119,7 +122,8 @@ godot --headless --path . --script tests/rebuild_test.gd --quit-after 1500
 godot --path . --script tests/visual_review.gd --quit-after 3000
 ```
 
-The first loads real scenes and checks camera framing/bounds, all inspections,
+The first loads real scenes and checks fixed camera position/FOV, rotation bounds,
+centering, object visibility/raycast access at every mouse-look limit, all inspections,
 raycasts, transport, manual circles including angle wrap, rate limit/inversion,
 pages, physical pet button input, menu/intro/ending flow and native audio streams.
 The second captures actual rendered views under `artifacts/` (ignored by Git).

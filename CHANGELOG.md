@@ -1,5 +1,24 @@
 # Gameplay rebuild
 
+## Fixed tabletop camera correction — 2026-10-18
+- Removed accumulated edge panning and its obsolete settings. Normal tabletop
+  mode keeps the authored position and 42-degree FOV; cursor input changes only
+  local rotation, smoothly bounded to horizontal +/-3 and vertical +/-2 degrees.
+  Centering the cursor restores neutral orientation. Limits and smoothing export
+  to the Inspector. Mouse-wheel zoom is restricted to inspection.
+- Authored an elevated camera transform and moved only the four object instances:
+  centered cassette, upper-right pet, horizontal pencil below, cropped book left.
+  The table fills the background at every look limit. Existing models are unchanged.
+- Kept smooth inspection entry/zoom/return and the ending's exclusive camera
+  control. Ending script/geometry, sketchbook contents, audio, pencil gesture,
+  pet logic, menu, intro and PSX integration were not changed.
+- Replaced obsolete pan tests with fixed-position/FOV, bounded rotation, centering,
+  smooth return, raycast access and visibility checks. A first full-bounds check
+  caught pet clipping at the right edge; its position was adjusted and retested.
+- Graphical Godot 4.7.2 run: 146 checks passed, zero failures. All 9 scenes and
+  changed GDScripts pass MCP validation; editor error list is empty. Actual neutral,
+  four corner, inspection, rewind and ending captures were rendered and reviewed.
+
 ## Targeted camera and pencil-navigation adjustment — 2026-10-18
 - Tightened tabletop framing to a close, near-overhead view centered on the
   cassette; slowed edge pan, widened the neutral center and capped diagonal speed.

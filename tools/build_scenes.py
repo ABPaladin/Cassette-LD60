@@ -53,9 +53,9 @@ def tabletop():
     s.node('TableLight','OmniLight3D',position=v((-.3,3,0)),light_color='Color(1,.73,.44,1)',light_energy=2.2,omni_range=7.0)
     s.node('RimLight','OmniLight3D',position=v((2,2,-2)),light_color='Color(.38,.46,.65,1)',light_energy=.55,omni_range=6.0)
     s.node('DoorLight','OmniLight3D',position=v((-.4,1.5,4.4)),light_color='Color(.52,.61,.72,1)',light_energy=2.5,omni_range=5.0)
-    s.node('TabletopCamera','Camera3D',script=camera,current=True,fov=42.0,near=.03)
+    s.node('TabletopCamera','Camera3D',position=v((0,2.2,.5)),rotation=v((-1.34732,0,0)),script=camera,current=True,fov=42.0,near=.03)
     s.node('Objects','Node3D')
-    for name,position in [('Cassette',(-2.15,.10,-1.05)),('Pencil',(-2.45,.11,1.45)),('Sketchbook',(2.25,.1,-1.35)),('Tamagotchi',(2.5,.12,1.55))]:
+    for name,position in [('Cassette',(0,.10,0)),('Pencil',(0,.11,.55)),('Sketchbook',(-1.43,.1,-.88)),('Tamagotchi',(.83,.12,-.30))]:
         ref=s.external('PackedScene','scenes/objects/'+name.lower()+'.tscn')
         s.instance(name,ref,'Objects',position=v(position))
     s.node('InspectController','Node',script=inspect,camera_path='NodePath("../TabletopCamera")')

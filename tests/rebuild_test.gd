@@ -16,37 +16,69 @@ func _run() -> void:
 	await process_frame
 	var camera = scene.get_node("TabletopCamera")
 	camera.set_process(false)
-	var visible_objects := 0
-	for object in scene.get_node("Objects").get_children():
-		if camera.is_position_in_frustum(object.global_position): visible_objects += 1
-	check(visible_objects < 4, "Initial framing requires exploration rather than showing every object")
+	camera.step_camera(3.0, Vector2(.5,.5))
+	var original: Transform3D = camera.global_transform
+	var original_fov: float = camera.fov
+	var inspector = scene.get_node("InspectController")
 	var home_pixel: Vector2 = camera.unproject_position(scene.get_node("Objects/Cassette").global_position) / root.get_visible_rect().size
-	check(home_pixel.distance_to(Vector2(.5,.5)) < .08, "Close tabletop view opens centered on the cassette")
-	check(rad_to_deg(-camera.rotation.x) > 65.0, "Tabletop camera reads as an angled overhead composition")
-	var original: Vector3 = camera.position
-	var original_focus: Vector3 = camera.focus
-	camera.step_camera(0.1, Vector2(1,0))
-	check(camera.focus.x > original_focus.x and camera.focus.z < original_focus.z, "Cursor upper-right pans across table")
-	check(camera.position.distance_to(original) < 1.0, "Camera movement interpolates")
-	for i in range(100): camera.step_camera(.1, Vector2(1,0))
-	check(is_equal_approx(camera.focus.x, camera.movement_limits.x), "Camera X boundary")
-	check(is_equal_approx(camera.focus.z, -camera.movement_limits.y), "Camera Z boundary")
-	for corner in [Vector2(-1,-1),Vector2(1,-1),Vector2(-1,1),Vector2(1,1)]:
-		camera.focus = Vector3(corner.x * camera.movement_limits.x,0,corner.y * camera.movement_limits.y)
-		camera.step_camera(3.0,Vector2(.5,.5))
+	check(home_pixel.distance_to(Vector2(.5,.5)) < .08, "Fixed composition centers the cassette")
+	check(rad_to_deg(-camera.rotation.x) > 70.0, "Elevated tabletop angle matches the overhead reference")
+	camera.step_camera(.016, Vector2(1,0))
+	check(camera.look_angles.x < 0 and camera.look_angles.y > 0, "Mouse-look rotates toward the cursor")
+	check(absf(camera.look_angles.x) < deg_to_rad(camera.horizontal_look_degrees) * .5, "Mouse-look interpolates instead of snapping")
+	camera.step_camera(3.0, Vector2(.5,.5))
+	var probes: Dictionary = {}
+	var baseline: Dictionary = {}
+	for object in scene.get_node("Objects").get_children():
+		# The notebook is deliberately cropped: test its visible lower-right page area.
+		var point: Vector3 = object.global_position + (Vector3(.3,0,.35) if object.object_id == "sketchbook" else Vector3.ZERO)
+		probes[object] = point
+		baseline[object] = camera.unproject_position(point) / root.get_visible_rect().size
+	for cursor in [Vector2.ZERO,Vector2(1,0),Vector2(0,1),Vector2.ONE,Vector2(-2,3)]:
+		for i in range(120): camera.step_camera(.1,cursor)
+		check(camera.global_position == original.origin and camera.fov == original_fov, "Position and FOV remain fixed at cursor " + str(cursor))
+		check(absf(rad_to_deg(camera.look_angles.x)) <= 3.001 and absf(rad_to_deg(camera.look_angles.y)) <= 2.001, "Rotation stays within 3/2 degree limits at " + str(cursor))
+		for object in probes:
+			var pixel: Vector2 = camera.unproject_position(probes[object])
+			var normalized: Vector2 = pixel / root.get_visible_rect().size
+			check(Rect2(0,0,1,1).has_point(normalized) and inspector.pick(pixel) == object, object.name + " stays visible and clickable at " + str(cursor))
+			check(normalized.distance_to(baseline[object]) < .09, object.name + " stays near its composed screen position")
+			if object.object_id != "sketchbook":
+				var half_size: Vector3 = object.get_node("Collision").shape.size * .5
+				var fully_visible := true
+				for x in [-1,1]:
+					for y in [-1,1]:
+						for z in [-1,1]:
+							var vertex: Vector3 = object.global_transform * (half_size * Vector3(x,y,z))
+							var screen: Vector2 = camera.unproject_position(vertex) / root.get_visible_rect().size
+							if not Rect2(0,0,1,1).has_point(screen): fully_visible = false
+				check(fully_visible, object.name + " remains fully within the frame")
 		var table_fills_view := true
 		for screen_corner in [Vector2.ZERO,Vector2(1,0),Vector2(0,1),Vector2.ONE]:
 			var pixel: Vector2 = screen_corner * root.get_visible_rect().size
 			var surface: Variant = Plane(Vector3.UP,0).intersects_ray(camera.project_ray_origin(pixel),camera.project_ray_normal(pixel))
 			if surface == null or absf(surface.x) > 4.0 or absf(surface.z) > 3.0: table_fills_view = false
-		check(table_fills_view,"Table fills the screen at pan boundary " + str(corner))
-	var saved: Vector3 = camera.focus
+		check(table_fills_view,"Brown tabletop covers every corner at " + str(cursor))
+	camera.step_camera(3.0,Vector2(.5,.5))
+	check(camera.global_transform.is_equal_approx(original), "Centered cursor smoothly restores neutral orientation")
+	var distance_before: float = camera.inspect_distance
+	camera.zoom(-.5)
+	camera.step_camera(.1,Vector2(.5,.5))
+	check(camera.inspect_distance == distance_before and camera.global_position == original.origin and camera.fov == original_fov, "Zoom is ignored outside inspection")
+	camera.step_camera(3.0,Vector2(1,0))
+	var saved: Transform3D = camera.global_transform
+	var saved_angles: Vector2 = camera.look_angles
 	camera.inspect_at(Vector3(1,.5,1),1.2)
 	camera.step_camera(.1,Vector2.ZERO)
-	check(camera.focus == saved, "Inspection suspends table pan")
+	check(camera.look_angles == saved_angles and camera.global_position != saved.origin, "Inspection permits translation and suspends tabletop mouse-look")
+	camera.zoom(-.1)
+	check(is_equal_approx(camera.inspect_distance,1.1), "Inspection zoom remains available")
 	camera.return_to_table()
-	check(camera.focus == saved, "Exact previous tabletop focus restored")
-	var inspector = scene.get_node("InspectController")
+	camera.step_camera(.016,Vector2(1,0))
+	check(camera.returning and camera.global_position != saved.origin, "Inspection return interpolates without a jump")
+	for i in range(120): camera.step_camera(.1,Vector2(1,0))
+	check(not camera.returning and camera.global_transform.is_equal_approx(saved), "Inspection returns to the fixed position and previous look")
+	camera.step_camera(3.0,Vector2(.5,.5))
 	for object in scene.get_node("Objects").get_children():
 		var rest: Transform3D = object.global_transform
 		inspector.select(object)
