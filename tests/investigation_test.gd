@@ -43,7 +43,7 @@ func run() -> void:
 	var wrong: Array[String] = ["1","2","3","4"]
 	check(not puzzle.submit(wrong) and not puzzle.solved,"Incorrect order permits another attempt")
 	var pet = table.get_node("Objects/Tamagotchi")
-	check(pet.sequence.values == puzzle.data.correct_order,"Pet memory follows central sequence data")
+	check(pet.sequence.values == PackedStringArray(puzzle.data.correct_order),"Pet memory follows central sequence data")
 	var book = table.get_node("Objects/Sketchbook")
 	book.set_open(true)
 	book.turn_page(2)

@@ -6,6 +6,8 @@ signal inspection_changed(inspected: bool)
 @export var inspect_distance := 1.35
 @export var lift_height := 0.55
 @export var replacement_model: PackedScene
+## Optional moving mesh replacements. Keep the named anchors and their collision.
+@export var replacement_parts: Dictionary[NodePath, PackedScene] = {}
 @onready var visual: Node3D = $Visual
 var rest_transform: Transform3D
 var rest_visual: Transform3D
@@ -20,6 +22,13 @@ func _ready() -> void:
 	if replacement_model != null:
 		$Visual/Model.hide()
 		visual.add_child(replacement_model.instantiate())
+	for path in replacement_parts:
+		var anchor := get_node_or_null(path)
+		if anchor == null or not visual.is_ancestor_of(anchor):
+			push_warning("Model part needs a child of Visual: " + str(path))
+			continue
+		if anchor is MeshInstance3D: anchor.mesh = null
+		if replacement_parts[path] != null: anchor.add_child(replacement_parts[path].instantiate())
 
 func _process(delta: float) -> void:
 	var wanted := rest_visual.basis.get_scale() * (1.025 if hovered and not inspected else 1.0)

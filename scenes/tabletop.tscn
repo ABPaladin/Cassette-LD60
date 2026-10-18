@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/objects/sketchbook.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/objects/tamagotchi.tscn" id="7"]
 [ext_resource type="Script" uid="uid://b321qs5bry2dx" path="res://scripts/retro_presentation.gd" id="8"]
+[ext_resource type="Script" path="res://scripts/environment_models.gd" id="9"]
 
 [sub_resource type="StandardMaterial3D" id="1"]
 albedo_color = Color(0.29, 0.15, 0.072, 1)
@@ -151,3 +152,6 @@ camera_path = NodePath("../TabletopCamera")
 
 [node name="RetroPresentation" type="Node" parent="." unique_id=1705722516]
 script = ExtResource("8")
+
+[node name="EnvironmentModels" type="Node" parent="."]
+script = ExtResource("9")

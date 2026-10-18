@@ -30,8 +30,11 @@ func _run() -> void:
 	var probes: Dictionary = {}
 	var baseline: Dictionary = {}
 	for object in scene.get_node("Objects").get_children():
-		# The notebook is deliberately cropped: test its visible lower-right page area.
-		var point: Vector3 = object.global_position + (Vector3(.3,0,.35) if object.object_id == "sketchbook" else Vector3.ZERO)
+		# Preserve the current teammate layout: book and upper pet are cropped.
+		var offset := Vector3.ZERO
+		if object.object_id == "sketchbook": offset = Vector3(.3,0,.35)
+		if object.object_id == "tamagotchi": offset = Vector3(0,0,.2)
+		var point: Vector3 = object.global_position + offset
 		probes[object] = point
 		baseline[object] = camera.unproject_position(point) / root.get_visible_rect().size
 	for cursor in [Vector2.ZERO,Vector2(1,0),Vector2(0,1),Vector2.ONE,Vector2(-2,3)]:
@@ -43,7 +46,7 @@ func _run() -> void:
 			var normalized: Vector2 = pixel / root.get_visible_rect().size
 			check(Rect2(0,0,1,1).has_point(normalized) and inspector.pick(pixel) == object, object.name + " stays visible and clickable at " + str(cursor))
 			check(normalized.distance_to(baseline[object]) < .09, object.name + " stays near its composed screen position")
-			if object.object_id != "sketchbook":
+			if object.object_id not in ["sketchbook", "tamagotchi"]:
 				var half_size: Vector3 = object.get_node("Collision").shape.size * .5
 				var fully_visible := true
 				for x in [-1,1]:
@@ -193,13 +196,13 @@ func _run() -> void:
 	var pet = scene.get_node("Objects/Tamagotchi")
 	inspector.select(pet)
 	pet.press_button(2)
-	check(pet.current_value() == "12", "Pet next button cycles configurable numbers")
+	check(pet.current_value() == pet.sequence.values[1], "Pet next button cycles configurable numbers")
 	pet.press_button(1)
 	check(pet.screen_state == "SELECTED", "Pet middle button selects displayed value")
 	pet.press_button(0)
-	check(pet.current_value() == "00", "Pet previous button reverses sequence")
+	check(pet.current_value() == pet.sequence.values[0], "Pet previous button reverses sequence")
 	pet.press_button(0)
-	check(pet.current_value() == "56", "Pet wraps configurable sequence")
+	check(pet.current_value() == pet.sequence.values[-1], "Pet wraps configurable sequence")
 	camera.step_camera(2.0,Vector2(.5,.5))
 	await create_timer(.4).timeout
 	for index in range(3):

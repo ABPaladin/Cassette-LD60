@@ -1,7 +1,7 @@
 extends Resource
 ## One source for fragment times, captions, listening windows, notebook and pet clues.
 @export var fragments: Array[Dictionary] = []
-@export var correct_order: PackedStringArray = []
+@export var correct_order: Array[String] = []
 @export var captions: Array[Dictionary] = []
 @export var tolerance_seconds := 2.0
 @export var required_listening_seconds := 1.0

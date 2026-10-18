@@ -1,23 +1,17 @@
-"""Generate reproducible, dependency-scoped presets; never touches gameplay scenes."""
+"""Include new gameplay resources automatically; exclude editor/source-only folders."""
 from pathlib import Path
-import json
-files = [str(p).replace('\\','/') for folder,pattern in [('scenes','*.tscn'),('scripts','*.gd'),('resources','*.tres')] for p in Path(folder).rglob(pattern)]
-selected = ', '.join(json.dumps('res://'+f) for f in files)
-files += [p.as_posix() for p in Path('addons/psx_shader/shaders').rglob('*') if p.suffix in ['.gdshader','.gdshaderinc']]
-selected = ', '.join(json.dumps('res://'+f) for f in files)
 presets=[]
 for i,(name,platform,output,features) in enumerate([('Web','Web','build/web/index.html',''),('Windows','Windows Desktop','build/windows/Cassette.exe',''),('Web QA','Web','build/web-qa/index.html','web_qa')]):
     Path(output).parent.mkdir(parents=True,exist_ok=True)
     presets.append(f'''[preset.{i}]
 name="{name}"
 platform="{platform}"
-runnable=true
+runnable={'false' if name == 'Web QA' else 'true'}
 advanced_options=false
 dedicated_server=false
 custom_features="{features}"
-export_filter="resources"
-export_files=PackedStringArray({selected})
-include_filter="assets/audio/placeholder/*,assets/sketchbook/*.png,assets/sketchbook/*.jpg,assets/sketchbook/*.webp"
+export_filter="all_resources"
+include_filter="assets/fonts/OFL.txt"
 exclude_filter="*.md,tests/*,tools/*,artifacts/*,build/*,addons/godot-mcp/*,addons/psx_shader/example/*"
 export_path="{output}"
 encryption_include_filters=""

@@ -14,19 +14,24 @@ Open `project.godot` with Godot **4.7.2** and press **F5**. The main scene is
   right-click or RETURN to put it back and restore the previous tabletop view.
 - Cassette: PLAY/PAUSE and a read-only tape-position strip. Use circular pencil
   movement to rewind or advance; there are no time-jump or scrub controls.
-  The current recording is deliberately **silent simulated timing,
-  03:00**, with no final mystery audio.
+  The current 03:00 recording contains original placeholder tones/hiss and marked
+  transcript captions. The playable investigation is configured in
+  `resources/investigation.tres`; final voice/song audio is still required.
 - Pencil: inspect it and choose **USE ON CASSETTE**. The pencil enters the left
   reel. Hold left mouse and move in circles around that reel: clockwise rewinds,
   counterclockwise advances. One turn is 12 seconds by default. Release to stop.
-  The timeline remains live. Return exits and restores the pencil to the table.
+  The timeline remains live. REMOVE PENCIL / LISTEN returns to cassette playback;
+  Return exits and restores the pencil to the table.
 - Sketchbook: OPEN/CLOSE and page arrows operate the 3D cover and page surface.
 - Tamagotchi: click its three actual buttons. Left goes backward, middle selects
-  the shown symbol, right goes forward. This is a temporary sequence, not a code.
+  the shown symbol, right goes forward. Its memory gives the configured fragment
+  order, initially 2, 4, 1, 3. Inspect the notebook for the tape timestamps.
 - **F9 / DEBUG: ENDING** runs the technical ending. It stops tape playback, plays
   a rear cue, turns to the opening door, plays an original synthetic shot, flashes
   red, falls, muffles audio, distresses the picture, and fades to an ending panel.
-  RETURN TO MENU starts a fresh loop. No investigation solution triggers it yet.
+  RETURN TO MENU starts a fresh loop. Correctly reconstructing the discovered
+  fragments also triggers this ending, once. F9/debug controls are unavailable
+  in release exports and on Web.
 
 ## Scene responsibilities
 
@@ -58,13 +63,15 @@ pet `Visual/Screen` and `Button0`–`Button2`. Replace their primitive meshes as
 These anchors do not depend on mesh vertices or imported mesh names. The default
 mechanism placeholders can be replaced by artist components under the same anchors.
 
-Page resources live in `resources/pages/`. Set `artwork` on each page to replace
-the text/doodles with an artist texture. Page order is the book's exported `pages`.
-The number/symbol list is `resources/pet_sequence.tres`.
+Page resources live in `resources/pages/`. Set `artwork` or `artwork_path` to add
+an artist texture with an `artwork_caption`. Page order is the exported `pages`.
+The investigation overrides the pet's sequence from its central `correct_order`.
+See `assets/models/INTEGRATION.md` for the complete model replacement contract.
 
 `resources/interface_font.tres` is the single font reference for menu, intro,
-controls and pages. Vintage Typist was not present; a system monospaced font with
-fallback is used. Replace that resource with the supplied licensed font later.
+controls and pages. Vintage Typist was not present; bundled Courier Prime is used
+on both desktop and Web. Its OFL license is in `assets/fonts/OFL.txt`. Replace the
+resource's `base_font` with the supplied licensed font later.
 
 ## Tuning and future puzzle work
 
@@ -81,7 +88,8 @@ duration, pitch, distortion, reverb, timestamp events and regions. Real stream
 duration overrides simulated duration. The tape owns an isolated audio bus and
 removes it on exit. Seeking updates position and region state; forward playback
 emits crossed timestamp events, including frame skips. The fragment collection
-and ordering API validates ownership but contains **no puzzle solution**.
+and ordering API validates ownership. The investigation resource supplies the
+solution, captions, fragments, listening tolerance and suspense timing.
 
 The ending exposes noise and gunshot AudioStream properties and timing scale.
 Current cues are generated original noise/tone bursts, not music or recordings.

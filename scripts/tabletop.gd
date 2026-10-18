@@ -63,7 +63,7 @@ func _setup_investigation() -> void:
 		actions.show()
 		timeline.visible = inspector.selected != null and inspector.selected.object_id == "cassette")
 	$Objects/Tamagotchi.sequence = $Objects/Tamagotchi.sequence.duplicate()
-	$Objects/Tamagotchi.sequence.values = puzzle.data.correct_order
+	$Objects/Tamagotchi.sequence.values = PackedStringArray(puzzle.data.correct_order)
 	$Objects/Tamagotchi._update_screen()
 
 func _open_fragments() -> void:

@@ -103,3 +103,27 @@
   simulated recording, synthetic cinematic cues, font fallback, and debug ending.
   Final recordings, mystery clues, solution, artwork and 10–15 minute pacing are
   not authored in this mechanical foundation.
+
+
+## Investigation and release handoff - 18 October 2026
+- Added the configurable four-fragment listened puzzle, notebook timestamps, pet
+  order, reconstruction/replay UI and guarded solved-to-ending transition.
+- Added original bundled lamp/room/tape ambience, audio bus controls and baked
+  ending cues for Web Sample playback. No final voice or song is supplied.
+- Added aspect-preserving artwork/caption slots on 3D pages; original Gloria art
+  is missing. Added model integration guide and optional mechanism/environment slots.
+- Preserved fixed camera, circular rewind, ending choreography and existing addon.
+- Fixed Web export dependencies for PSX shaders/audio buses and solution-array
+  serialization. Created single-thread production Web ZIP and Windows executable.
+- Desktop investigation and full regression logs report zero failures. Chromium
+  HTTP iframe checks passed through all four discoveries with real circular mouse
+  input. Testing then stopped at user request; browser reconstruction/ending/restart,
+  Firefox, resize and production playthrough are not claimed as validated.
+- See RELEASE.md for deliverables, remaining content and exact validation limits.
+
+## Web launch and font correction
+- Replaced hand-maintained export resource selection with all game resources and
+  development-folder exclusions; Web QA no longer competes as a runnable preset.
+- Bundled unmodified Courier Prime Regular with its SIL OFL license. Shared text
+  now loads a FontFile instead of OS-dependent SystemFont, fixing Web fallback.
+- Rebuilt production Web packaging; no further full gameplay tests were run.
