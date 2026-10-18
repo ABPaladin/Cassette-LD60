@@ -7,6 +7,8 @@ signal region_entered(id: String)
 signal region_exited(id: String)
 signal fragment_collected(id: String)
 signal fragment_order_changed(order: Array[String])
+signal playback_advanced(previous: float, current: float)
+signal seeked(seconds: float)
 @export var data: Resource = preload("res://resources/test_tape.tres")
 var position_seconds := 0.0
 var duration := 180.0
@@ -58,6 +60,7 @@ func advance(delta: float) -> void:
 	if not playing: return
 	var previous := position_seconds
 	position_seconds = minf(duration, position_seconds + delta * pitch)
+	playback_advanced.emit(previous, position_seconds)
 	for marker in data.timestamps:
 		var time := float(marker.get("time", -1.0))
 		if previous < time and position_seconds >= time:
@@ -95,6 +98,7 @@ func stop() -> void:
 
 func seek(seconds: float) -> void:
 	position_seconds = clampf(seconds, 0.0, duration)
+	seeked.emit(position_seconds)
 	if playing and player.stream != null: player.play(position_seconds)
 	_update_regions()
 	position_changed.emit(position_seconds, duration)
@@ -132,7 +136,7 @@ func _update_regions() -> void:
 	active_regions = next
 
 func collect_fragment(id: String) -> void:
-	# API only: no automatic collection, solution, or ending trigger is authored.
+	# Investigation awards fragments only after playback, never from seek notifications.
 	if not id.is_empty() and id not in fragments:
 		fragments.append(id)
 		fragment_collected.emit(id)

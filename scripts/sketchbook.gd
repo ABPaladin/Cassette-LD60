@@ -6,6 +6,7 @@ var page_index := 0
 var cover_tween: Tween
 var page_label: Label3D
 var page_art: Sprite3D
+@export var investigation: Resource = preload("res://resources/investigation.tres")
 
 func _ready() -> void:
 	super._ready()
@@ -44,7 +45,7 @@ func _show_page() -> void:
 	$Visual/PageSurface.visible = opened
 	if pages.is_empty(): return
 	var page: Resource = pages[page_index]
-	page_label.text = page.title + "\n\n" + page.text + "\n\n— %d —" % (page_index + 1)
+	page_label.text = page.title + "\n\n" + (investigation.clue_text() if page.investigation_clues else page.text) + "\n\n— %d —" % (page_index + 1)
 	page_art.texture = page.artwork
 	page_art.visible = page.artwork != null
 	page_label.visible = page.artwork == null

@@ -12,6 +12,10 @@ var operation := "inspect"
 var timeline: PanelContainer
 var rewinder: Node
 var ending: Node
+var puzzle: Node
+var fragment_panel: PanelContainer
+var subtitle: Label
+var ending_started := false
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -24,6 +28,62 @@ func _ready() -> void:
 	ending.finished.connect(func(): return_to_menu.emit())
 	inspector.selection_changed.connect(_selection_changed)
 	inspector.hover_changed.connect(func(object): title.text = object.display_name if object != null else "GLORIA'S BELONGINGS / 1998")
+	_setup_investigation()
+
+func _setup_investigation() -> void:
+	puzzle = preload("res://scripts/investigation.gd").new()
+	add_child(puzzle)
+	puzzle.bind($Objects/Cassette/TapeAudioController)
+	puzzle.puzzle_solved.connect(_puzzle_solved)
+	subtitle = UI.label(ui,"",18)
+	subtitle.position = Vector2(160,65)
+	subtitle.size = Vector2(640,90)
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	puzzle.caption_changed.connect(func(text): subtitle.text = text)
+	fragment_panel = preload("res://scripts/fragment_panel.gd").new()
+	ui.add_child(fragment_panel)
+	fragment_panel.bind(puzzle)
+	fragment_panel.closed.connect(func():
+		if ending_started: return
+		inspector.enabled = true
+		actions.show()
+		timeline.visible = inspector.selected != null and inspector.selected.object_id == "cassette")
+	$Objects/Tamagotchi.sequence = $Objects/Tamagotchi.sequence.duplicate()
+	$Objects/Tamagotchi.sequence.values = puzzle.data.correct_order
+	$Objects/Tamagotchi._update_screen()
+
+func _open_fragments() -> void:
+	if ending_started: return
+	if rewinder.active: _stop_rewind()
+	$Objects/Cassette/TapeAudioController.pause()
+	inspector.enabled = false
+	actions.hide()
+	timeline.hide()
+	fragment_panel.refresh()
+	fragment_panel.show()
+
+func _puzzle_solved(message: String) -> void:
+	if ending_started: return
+	ending_started = true
+	fragment_panel.replay.stop()
+	fragment_panel.hide()
+	inspector.leave()
+	inspector.enabled = false
+	$Objects/Cassette/TapeAudioController.pause()
+	ui.hide()
+	var layer := CanvasLayer.new()
+	layer.layer = 20
+	add_child(layer)
+	var reveal := UI.label(layer,message,30)
+	reveal.position = Vector2(80,170)
+	reveal.size = Vector2(800,160)
+	reveal.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	await get_tree().create_timer(puzzle.data.reveal_seconds).timeout
+	reveal.hide()
+	await get_tree().create_timer(puzzle.data.suspense_seconds).timeout
+	layer.queue_free()
+	ending.begin()
 
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
@@ -47,9 +107,10 @@ func _build_ui() -> void:
 	ui.add_child(timeline)
 	timeline.bind($Objects/Cassette/TapeAudioController)
 	timeline.hide()
-	var debug_button := UI.button(ui, "DEBUG: ENDING [F9]", _debug_ending)
-	debug_button.position = Vector2(714, 16)
-	debug_button.add_theme_font_size_override("font_size", 14)
+	if OS.is_debug_build() and not OS.has_feature("web"):
+		var debug_button := UI.button(ui, "DEBUG: ENDING [F9]", _debug_ending)
+		debug_button.position = Vector2(714, 16)
+		debug_button.add_theme_font_size_override("font_size", 14)
 
 func _selection_changed(object: Node3D) -> void:
 	if rewinder != null and rewinder.active:
@@ -68,6 +129,7 @@ func _selection_changed(object: Node3D) -> void:
 	if object.object_id == "pencil":
 		UI.button(actions, "USE ON CASSETTE", _use_pencil)
 	if object.object_id == "cassette":
+		UI.button(actions,"ARRANGE FRAGMENTS",_open_fragments)
 		instructions.text = "PLAY / PAUSE here. Use the pencil to rewind or advance. ESC returns."
 		if pencil_selected:
 			UI.button(actions, "INSERT PENCIL", _begin_rewind)
@@ -92,6 +154,14 @@ func _begin_rewind() -> void:
 	camera.inspect_at($Objects/Cassette.rest_transform.origin + Vector3.UP * .68, 1.85)
 	instructions.text = "Hold LMB and circle the reel: clockwise rewinds / opposite advances. ESC returns."
 	title.text = "PENCIL REWIND"
+	for child in actions.get_children(): child.queue_free()
+	UI.button(actions,"REMOVE PENCIL / LISTEN",_stop_rewind)
+	UI.button(actions,"RETURN",inspector.leave)
+
+func _stop_rewind() -> void:
+	_selection_changed($Objects/Cassette)
+	inspector.rotation_enabled = true
+	camera.inspect_at($Objects/Cassette.global_position, $Objects/Cassette.inspect_distance)
 
 func _process(_delta: float) -> void:
 	timeline.manual_mode = rewinder != null and rewinder.active
@@ -103,6 +173,10 @@ func _process(_delta: float) -> void:
 		timeline.position = Vector2(420, 330)
 
 func _debug_ending() -> void:
+	if not OS.is_debug_build() or OS.has_feature("web") or ending_started: return
+	ending_started = true
+	fragment_panel.hide()
+	fragment_panel.replay.stop()
 	ending.begin()
 
 func _unhandled_input(event: InputEvent) -> void:
