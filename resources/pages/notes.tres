@@ -1,6 +1,17 @@
-[gd_resource type="Resource" load_steps=2 format=3]
-[ext_resource type="Script" path="res://scripts/book_page.gd" id="1"]
+[gd_resource type="Resource" format=3 uid="uid://bhluxod3dq2d5"]
+
+[ext_resource type="Script" uid="uid://bf3tiymwooaka" path="res://scripts/book_page.gd" id="1"]
+
 [resource]
 script = ExtResource("1")
 title = "Emily's notes"
-text = "October, 1998\n\nRemember to call.\nBring the notebook.\n\n    /\_/\\\n   ( o.o )\n    > ^ <\n\n[temporary page]"
+text = "October, 1998
+
+Remember to call.
+Bring the notebook.
+
+    /_/\\
+   ( o.o )
+    > ^ <
+
+[temporary page]"

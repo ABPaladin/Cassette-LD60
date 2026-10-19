@@ -15,6 +15,8 @@ var duration := 180.0
 var playing := false
 var pitch := 1.0
 var player: AudioStreamPlayer
+var music: AudioStreamPlayer
+var music_bus: StringName
 var active_regions: Array[String] = []
 var fragments: Array[String] = []
 var fragment_order: Array[String] = []
@@ -37,6 +39,7 @@ func _ready() -> void:
 	AudioServer.set_bus_name(index, bus_name)
 	AudioServer.set_bus_send(index, &"Cassette")
 	player.bus = bus_name
+	_setup_music()
 	# Web Sample playback cannot run bus effects. Shipping media is pre-rendered.
 	if OS.has_feature("web"): return
 	var distortion := AudioEffectDistortion.new()
@@ -53,16 +56,67 @@ func _ready() -> void:
 	AudioServer.set_bus_effect_enabled(index, 2, false)
 
 func _exit_tree() -> void:
+	var music_index := AudioServer.get_bus_index(music_bus)
+	if music_index > 0: AudioServer.remove_bus(music_index)
 	var index := AudioServer.get_bus_index(bus_name)
 	if index > 0: AudioServer.remove_bus(index)
 
 func _process(delta: float) -> void:
 	advance(delta)
+	if playing: _sync_music()
+
+func _setup_music() -> void:
+	if data.background_music == null: return
+	music = AudioStreamPlayer.new()
+	music.name = "CafeRadio"
+	add_child(music)
+	# Loop only this in-memory resource; the source OGG/import settings stay intact.
+	var stream := data.background_music.duplicate() as AudioStreamOggVorbis
+	stream.loop = true
+	stream.loop_offset = 0.0
+	music.stream = stream
+	music.volume_db = data.music_volume_db
+	music.pitch_scale = pitch
+	music.bus = &"Cassette"
+	# Web sample playback bypasses effects; retain the quiet dry mix there.
+	if OS.has_feature("web"): return
+	music_bus = StringName("CafeRadio_" + str(get_instance_id()))
+	AudioServer.add_bus()
+	var index := AudioServer.bus_count - 1
+	AudioServer.set_bus_name(index, music_bus)
+	AudioServer.set_bus_send(index, &"Cassette")
+	music.bus = music_bus
+	var lowpass := AudioEffectLowPassFilter.new()
+	lowpass.cutoff_hz = data.music_lowpass_hz
+	AudioServer.add_bus_effect(index, lowpass)
+
+func _sync_music(force_position: bool = false) -> void:
+	if music == null or music.stream.get_length() <= 0.0: return
+	var length := music.stream.get_length()
+	var target := fposmod(position_seconds, length)
+	music.stream_paused = not playing
+	if not playing:
+		if force_position and music.has_stream_playback(): music.seek(target)
+		return
+	if force_position or not music.playing:
+		music.play(target)
+	else:
+		# Voice remains the only clock; correct drift, including across a loop seam.
+		var drift := wrapf(music.get_playback_position() - target, -length * .5, length * .5)
+		if absf(drift) > .15: music.seek(target)
 
 func advance(delta: float) -> void:
 	if not playing: return
+	# Only an explicitly missing stream uses the simulation clock.
+	var next := position_seconds + delta*pitch
+	if player.stream != null:
+		next = maxf(position_seconds,player.get_playback_position())
+	_publish_position(minf(duration,next))
+	if position_seconds >= duration: _finish()
+
+func _publish_position(seconds: float) -> void:
 	var previous := position_seconds
-	position_seconds = minf(duration, position_seconds + delta * pitch)
+	position_seconds = seconds
 	playback_advanced.emit(previous, position_seconds)
 	for marker in data.timestamps:
 		var time := float(marker.get("time", -1.0))
@@ -77,17 +131,23 @@ func advance(delta: float) -> void:
 			region_exited.emit(str(region.get("id", "")))
 	_update_regions()
 	position_changed.emit(position_seconds, duration)
-	if position_seconds >= duration: _finish()
 
 func play() -> void:
+	if playing: return
 	if position_seconds >= duration: seek(0.0)
 	playing = true
-	if player.stream != null: player.play(position_seconds)
+	if player.stream != null:
+		# Recreate from the held transport position. This also works with Web samples.
+		player.play(position_seconds)
+		player.stream_paused = false
+	_sync_music(true)
 	state_changed.emit("PLAY")
 
 func pause() -> void:
+	if playing: advance(0.0)
 	playing = false
-	player.stop()
+	player.stream_paused = true
+	_sync_music()
 	state_changed.emit("PAUSE")
 
 func toggle() -> void:
@@ -97,19 +157,28 @@ func toggle() -> void:
 func stop() -> void:
 	pause()
 	seek(0.0)
+	player.stop()
+	if music != null: music.stop()
 	state_changed.emit("STOP")
 
 func seek(seconds: float) -> void:
 	position_seconds = clampf(seconds, 0.0, duration)
 	seeked.emit(position_seconds)
-	if playing and player.stream != null: player.play(position_seconds)
+	if player.stream != null:
+		player.stream_paused = not playing
+		if player.has_stream_playback(): player.seek(position_seconds)
+		else: player.play(position_seconds)
+		player.stream_paused = not playing
 	_update_regions()
+	_sync_music(true)
 	position_changed.emit(position_seconds, duration)
 	if position_seconds >= duration and playing: _finish()
 
 func set_pitch(value: float) -> void:
+	if playing: advance(0.0)
 	pitch = clampf(value, 0.25, 2.0)
 	player.pitch_scale = pitch
+	if music != null: music.pitch_scale = pitch
 
 func set_muffled(value: bool) -> void:
 	var index := AudioServer.get_bus_index(bus_name)
@@ -119,13 +188,13 @@ func set_muffled(value: bool) -> void:
 func _finish() -> void:
 	playing = false
 	player.stop()
+	if music != null: music.stop()
 	state_changed.emit("END")
 	completed.emit()
 
 func _audio_finished() -> void:
 	if playing:
-		position_seconds = duration
-		position_changed.emit(position_seconds, duration)
+		_publish_position(duration)
 		_finish()
 
 func _update_regions() -> void:
@@ -140,7 +209,7 @@ func _update_regions() -> void:
 	active_regions = next
 
 func collect_fragment(id: String) -> void:
-	# Investigation awards fragments only after playback, never from seek notifications.
+	# Only a correct manual note awards a fragment; transport never decides answers.
 	if not id.is_empty() and id not in fragments:
 		fragments.append(id)
 		fragment_collected.emit(id)

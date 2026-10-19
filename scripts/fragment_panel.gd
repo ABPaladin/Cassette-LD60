@@ -8,6 +8,7 @@ var slot_buttons: Array[Button] = []
 var choices: HBoxContainer
 var feedback: Label
 var replay: AudioStreamPlayer
+var replay_end := 0.0
 
 func bind(investigation: Node) -> void:
 	puzzle = investigation
@@ -38,6 +39,8 @@ func bind(investigation: Node) -> void:
 	replay = AudioStreamPlayer.new()
 	replay.bus = &"Cassette"
 	add_child(replay)
+	visibility_changed.connect(func():
+		if not is_visible_in_tree(): replay.stop())
 	puzzle.changed.connect(refresh)
 	refresh()
 	hide()
@@ -67,15 +70,34 @@ func _submit() -> void:
 	if not puzzle.submit(slots): feedback.text = "The words don't fit yet. Listen and try another order."
 
 func _replay() -> void:
+	if not is_visible_in_tree() or puzzle.solved: return
+	# The tabletop mode gate pauses the main tape before this menu becomes usable.
+	if puzzle.tape.playing: return
+	replay.stop()
 	var id := slots[selected_slot]
-	if id.is_empty():
+	if id.is_empty() or id not in puzzle.discovered:
 		feedback.text = "Choose an occupied position to listen again."
 		return
 	feedback.text = "MY NOTE / " + puzzle.message_for(id)
 	for fragment in puzzle.data.fragments:
-		if str(fragment.id) == id and fragment.has("clip"):
-			replay.stream = load(fragment.clip) as AudioStream
-			replay.play()
+		if str(fragment.id) != id: continue
+		var recording := fragment.get("recording") as AudioStream
+		if recording == null:
+			feedback.text = "No recording configured for this fragment."
+			return
+		var start := clampf(float(fragment.get("audio_start",0.0)),0.0,recording.get_length())
+		replay_end = clampf(float(fragment.get("audio_end",start)),start,recording.get_length())
+		if replay_end <= start:
+			feedback.text = "This fragment's audio interval needs adjustment."
+			return
+		replay.stream = recording
+		replay.play(start)
+		return
+
+func _process(_delta: float) -> void:
+	if replay == null or not replay.playing: return
+	if not is_visible_in_tree() or puzzle.solved or puzzle.tape.playing or replay.get_playback_position() >= replay_end:
+		replay.stop()
 
 func dismiss() -> void:
 	replay.stop()

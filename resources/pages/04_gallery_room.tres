@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/book_page.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sketchbook/pages/04_gallery_room.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+artwork = ExtResource("2")
+artwork_full_page = true

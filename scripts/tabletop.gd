@@ -17,6 +17,10 @@ var fragment_panel: PanelContainer
 var word_note: PanelContainer
 var note_button: Button
 var ending_started := false
+var subtitle: Label
+var subtitle_panel: PanelContainer
+var subtitles_enabled := true
+var subtitle_active := false
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -33,6 +37,7 @@ func _ready() -> void:
 	inspector.selection_changed.connect(_selection_changed)
 	inspector.hover_changed.connect(func(object): title.text = object.display_name if object != null else "EMILY'S BELONGINGS / 1998")
 	_setup_investigation()
+	_setup_subtitles()
 	var audio = get_node_or_null("/root/AudioManager")
 	if audio != null: audio.start_room($Objects/Cassette/TapeAudioController)
 
@@ -66,6 +71,86 @@ func _restore_cassette_controls() -> void:
 	inspector.enabled = true
 	actions.show()
 	timeline.visible = inspector.selected != null and inspector.selected.object_id == "cassette"
+	_refresh_subtitle()
+
+func _setup_subtitles() -> void:
+	# Reuse the pre-drag top-centre Label and timed-cue lookup, independently of clues.
+	subtitle_panel = PanelContainer.new()
+	subtitle_panel.position = Vector2(160,65)
+	subtitle_panel.size = Vector2(640,0)
+	subtitle_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var shade := StyleBoxFlat.new()
+	shade.bg_color = Color(0.02,0.015,0.01,.68)
+	shade.content_margin_left = 12
+	shade.content_margin_right = 12
+	shade.content_margin_top = 6
+	shade.content_margin_bottom = 6
+	subtitle_panel.add_theme_stylebox_override("panel",shade)
+	ui.add_child(subtitle_panel)
+	subtitle = UI.label(subtitle_panel,"",18)
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	subtitle.add_theme_color_override("font_color",Color(.94,.9,.8))
+	var tape = $Objects/Cassette/TapeAudioController
+	tape.position_changed.connect(_update_subtitle)
+	tape.seeked.connect(func(seconds):
+		subtitle_active = true
+		_update_subtitle(seconds,tape.duration))
+	tape.state_changed.connect(func(state):
+		_sync_cassette_audio()
+		if state == "PLAY": subtitle_active = true
+		elif state == "STOP" or state == "END": subtitle_active = false
+		# PAUSE intentionally retains the current line.
+		_update_subtitle(tape.position_seconds,tape.duration))
+	ui.visibility_changed.connect(_refresh_subtitle)
+	timeline.visibility_changed.connect(_refresh_subtitle)
+	for panel in ui.get_children():
+		if panel is PanelContainer and panel != subtitle_panel and panel != timeline:
+			panel.visibility_changed.connect(_refresh_subtitle)
+	_update_subtitle(tape.position_seconds,tape.duration)
+
+func _refresh_subtitle() -> void:
+	if subtitle == null: return
+	_sync_cassette_audio()
+	var tape = $Objects/Cassette/TapeAudioController
+	_update_subtitle(tape.position_seconds,tape.duration)
+
+func _cassette_interface_open() -> bool:
+	var listening: bool = inspector.selected != null and inspector.selected.object_id == "cassette" and operation in ["inspect","rewind"]
+	var blocked: bool = not inspector.enabled or not ui.is_visible_in_tree() or not timeline.visible
+	for panel in ui.get_children():
+		if panel is PanelContainer and panel != subtitle_panel and panel != timeline and panel.is_visible_in_tree():
+			blocked = true
+	return listening and not blocked and not ending_started
+
+func _sync_cassette_audio(force_pause: bool = false) -> void:
+	# Shared mode gate: pausing never seeks or resumes, and leaves ambience alone.
+	var tape = $Objects/Cassette/TapeAudioController
+	var listening := not force_pause and _cassette_interface_open()
+	if tape.playing and (not listening or operation == "rewind"):
+		tape.pause()
+	if not listening and rewinder != null and rewinder.active:
+		rewinder.release()
+	if fragment_panel != null and (force_pause or ending_started or not fragment_panel.is_visible_in_tree()):
+		fragment_panel.replay.stop()
+
+func _update_subtitle(seconds: float, _duration: float) -> void:
+	var text := ""
+	if _cassette_interface_open() and subtitle_active and subtitles_enabled:
+		for entry in puzzle.data.captions:
+			if seconds >= float(entry.start) and seconds < float(entry.end):
+				var speaker := str(entry.get("speaker",""))
+				text = (speaker + "\n" if not speaker.is_empty() else "") + str(entry.text)
+				break
+	subtitle.text = text
+	subtitle_panel.visible = not text.is_empty()
+	subtitle_panel.size = Vector2(640,0)
+
+func _set_subtitles(value: bool) -> void:
+	subtitles_enabled = value
+	if subtitle != null:
+		var tape = $Objects/Cassette/TapeAudioController
+		_update_subtitle(tape.position_seconds,tape.duration)
 
 func _open_word_note() -> void:
 	if ending_started or rewinder.active or not puzzle.can_note(): return
@@ -78,7 +163,6 @@ func _open_word_note() -> void:
 func _open_fragments() -> void:
 	if ending_started: return
 	if rewinder.active: _stop_rewind()
-	$Objects/Cassette/TapeAudioController.pause()
 	inspector.enabled = false
 	actions.hide()
 	timeline.hide()
@@ -94,15 +178,18 @@ func _puzzle_solved(message: String) -> void:
 	fragment_panel.hide()
 	inspector.leave()
 	inspector.enabled = false
-	$Objects/Cassette/TapeAudioController.pause()
 	ui.hide()
 	var layer := CanvasLayer.new()
 	layer.layer = 20
 	add_child(layer)
 	var reveal := UI.label(layer,message,30)
+	reveal.theme = UI.make_theme()
+	reveal.add_theme_color_override("font_color",Color(.94,.90,.80))
+	reveal.add_theme_constant_override("line_spacing",10)
 	reveal.position = Vector2(80,170)
 	reveal.size = Vector2(800,160)
 	reveal.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	reveal.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	await get_tree().create_timer(puzzle.data.reveal_seconds).timeout
 	reveal.hide()
 	await get_tree().create_timer(puzzle.data.suspense_seconds).timeout
@@ -134,6 +221,12 @@ func _build_ui() -> void:
 	var audio = get_node_or_null("/root/AudioManager")
 	if audio != null:
 		var sound_panel: PanelContainer = audio.make_controls(ui,Vector2(24,105))
+		var subtitle_toggle := CheckButton.new()
+		subtitle_toggle.text = "SUBTITLES"
+		subtitle_toggle.button_pressed = subtitles_enabled
+		subtitle_toggle.toggled.connect(_set_subtitles)
+		sound_panel.get_child(0).add_child(subtitle_toggle)
+		sound_panel.get_child(0).move_child(subtitle_toggle,0)
 		var sound_button := UI.button(ui,"SOUND",func(): sound_panel.visible = not sound_panel.visible)
 		sound_button.position = Vector2(24,61)
 		sound_button.add_theme_font_size_override("font_size",14)
@@ -148,6 +241,7 @@ func _selection_changed(object: Node3D) -> void:
 		$Objects/Cassette.manual_rewind = false
 	operation = "inspect"
 	timeline.visible = object != null and object.object_id == "cassette"
+	_refresh_subtitle()
 	for child in actions.get_children(): child.queue_free()
 	if object == null:
 		title.text = "EMILY'S BELONGINGS / 1998"
@@ -166,7 +260,8 @@ func _selection_changed(object: Node3D) -> void:
 			UI.button(actions, "INSERT PENCIL", _begin_rewind)
 	if object.object_id == "sketchbook":
 		UI.button(actions, "OPEN / CLOSE", func(): object.set_open(not object.opened))
-		instructions.text = "Open the book. Drag a lit outer page corner across the spine. ESC returns."
+		UI.button(actions, "< PAGE", func(): object.turn_page(-1))
+		UI.button(actions, "PAGE >", func(): object.turn_page(1))
 	if object.object_id == "tamagotchi":
 		instructions.text = "Click its three physical buttons / drag shell to rotate / ESC returns"
 
@@ -182,7 +277,7 @@ func _begin_rewind() -> void:
 	$Objects/Cassette.manual_rewind = true
 	rewinder.begin($Objects/Cassette, $Objects/Pencil, camera)
 	camera.inspect_at($Objects/Cassette.rest_transform.origin + Vector3.UP * .68, 1.85)
-	instructions.text = "Hold LMB and circle the reel: clockwise rewinds / opposite advances. ESC returns."
+	instructions.text = "Hold LMB and circle the reel: clockwise advances / counterclockwise rewinds."
 	title.text = "PENCIL REWIND"
 	for child in actions.get_children(): child.queue_free()
 	UI.button(actions,"REMOVE PENCIL / LISTEN",_stop_rewind)

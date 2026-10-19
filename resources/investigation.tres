@@ -1,49 +1,197 @@
 [gd_resource type="Resource" format=3 uid="uid://c60xe3oj2a767"]
 
 [ext_resource type="Script" uid="uid://dkp3xmk0ufxig" path="res://scripts/investigation_data.gd" id="1"]
+[ext_resource type="AudioStream" uid="uid://brsnkshr0r8hr" path="res://audio/emily recording.ogg" id="2"]
 
 [resource]
 script = ExtResource("1")
 fragments = Array[Dictionary]([{
-"clip": "res://assets/audio/placeholder/fragment_1.wav",
+"audio_end": 27.0,
+"audio_start": 24.0,
 "duration": 3.0,
 "id": "1",
 "message": "CHECK",
+"recording": ExtResource("2"),
 "time": 24.0
 }, {
-"clip": "res://assets/audio/placeholder/fragment_2.wav",
+"audio_end": 54.0,
+"audio_start": 51.0,
 "duration": 3.0,
 "id": "2",
 "message": "DON'T",
+"recording": ExtResource("2"),
 "time": 51.0
 }, {
-"clip": "res://assets/audio/placeholder/fragment_3.wav",
+"audio_end": 82.0,
+"audio_start": 79.0,
 "duration": 3.0,
 "id": "3",
 "message": "THE DOOR",
+"recording": ExtResource("2"),
 "time": 79.0
 }, {
-"clip": "res://assets/audio/placeholder/fragment_4.wav",
+"audio_end": 107.0,
+"audio_start": 104.0,
 "duration": 3.0,
 "id": "4",
 "message": "TRUST HIM",
+"recording": ExtResource("2"),
 "time": 104.0
 }])
 correct_order = Array[String](["2", "4", "1", "3"])
 captions = Array[Dictionary]([{
-"end": 18.0,
-"start": 0.5,
-"text": "I couldn't say this in person. Keep my things. Remember me before all this. Goodbye."
+"end": 7,
+"speaker": "Emily",
+"start": 0,
+"text": "Hey. It's me. I'm at our little caf? across from the gallery."
 }, {
-"end": 43.0,
-"start": 36.0,
-"text": "I tried to tell someone. He was always listening."
+"end": 12,
+"speaker": "Emily",
+"start": 7,
+"text": "They've changed the curtains, but the coffee's still terrible."
 }, {
-"end": 72.0,
-"start": 65.0,
-"text": "If they call this a farewell, listen again. I wanted to come home."
+"end": 18,
+"speaker": "Emily",
+"start": 12,
+"text": "I almost called. Then I remembered how we used to save everything on tape."
 }, {
-"end": 142.0,
-"start": 130.0,
-"text": "I left the times in my notebook. The little pet remembers the order."
+"end": 23,
+"speaker": "Emily",
+"start": 18,
+"text": "I even found that pencil you used to rewind cassettes with."
+}, {
+"end": 28,
+"speaker": "Radio DJ",
+"start": 24,
+"text": "Check your watches, night owls. You're listening to Midnight FM."
+}, {
+"end": 32,
+"speaker": "Radio DJ",
+"start": 28,
+"text": "Here's something to keep you company until closing."
+}, {
+"end": 38,
+"speaker": "Emily",
+"start": 32,
+"text": "They still play songs like that. Remember our game?"
+}, {
+"end": 46,
+"speaker": "Emily",
+"start": 38,
+"text": "We'd pick tiny pieces out of a whole song and make a sentence no one else could hear."
+}, {
+"end": 50,
+"speaker": "Emily",
+"start": 46,
+"text": "You always won. I hated that."
+}, {
+"end": 57,
+"speaker": "Emily",
+"start": 51,
+"text": "Don't laugh, but I've been playing it again. Four little pieces this time."
+}, {
+"end": 64,
+"speaker": "Emily",
+"start": 57,
+"text": "Nothing clever, really. You might even recognize some of the words."
+}, {
+"end": 71,
+"speaker": "Emily",
+"start": 64,
+"text": "I brought my sketchbook today. There's a drawing of a room I couldn't get quite right."
+}, {
+"end": 78,
+"speaker": "Emily",
+"start": 71,
+"text": "I keep remembering one little detail differently."
+}, {
+"end": 86,
+"speaker": "Emily",
+"start": 79,
+"text": "The door is wrong in the drawing. Or maybe it's the only thing I got right."
+}, {
+"end": 92,
+"speaker": "Emily",
+"start": 86,
+"text": "See the tiny marks beside it? Same game as before."
+}, {
+"end": 97,
+"speaker": "Emily",
+"start": 92,
+"text": "I couldn't decide where each bit belonged."
+}, {
+"end": 103,
+"speaker": "Emily",
+"start": 97,
+"text": "You always understood my messy pages better than I did."
+}, {
+"end": 111,
+"speaker": "Emily",
+"start": 104,
+"text": "Trust him with the order, you'd say, pointing at that ridiculous little digital pet."
+}, {
+"end": 117,
+"speaker": "Emily",
+"start": 111,
+"text": "Imagine trusting a toy with something important. Well... maybe you were right."
+}, {
+"end": 124,
+"speaker": "Emily",
+"start": 117,
+"text": "I put him beside the sketchbook in a box with your name on it."
+}, {
+"end": 131,
+"speaker": "Emily",
+"start": 124,
+"text": "Keep them together, okay? Please don't throw either of them away."
+}, {
+"end": 139,
+"speaker": "Emily",
+"start": 131,
+"text": "Sometimes people can tell a story so neatly that you stop asking questions."
+}, {
+"end": 146,
+"speaker": "Emily",
+"start": 139,
+"text": "There can be something missing, and nobody notices because the ending sounds right."
+}, {
+"end": 155,
+"speaker": "Emily",
+"start": 146,
+"text": "So if you hear something about me one day that feels wrong, don't try to make sense of the ending first."
+}, {
+"end": 159,
+"speaker": "Emily",
+"start": 155,
+"text": "Start with the little pieces."
+}, {
+"end": 164,
+"speaker": "Emily",
+"start": 159,
+"text": "And don't go looking for answers by yourself."
+}, {
+"end": 170,
+"speaker": "Emily",
+"start": 164,
+"text": "If you find anything that scares you, talk to someone you can trust. Promise?"
+}, {
+"end": 177,
+"speaker": "Emily",
+"start": 170,
+"text": "I love you. See you when the song is over."
+}, {
+"end": 178.5,
+"speaker": "Waiter",
+"start": 177,
+"text": "Anything else?"
+}, {
+"end": 179.5,
+"speaker": "Emily",
+"start": 178.5,
+"text": "No, thank you."
+}, {
+"end": 180,
+"speaker": "",
+"start": 179.5,
+"text": "[SFX: Cassette stops.]"
 }])

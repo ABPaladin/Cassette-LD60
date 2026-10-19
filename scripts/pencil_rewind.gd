@@ -7,6 +7,8 @@ signal exited
 @export var invert_direction := false
 @export var maximum_seek_speed := 30.0
 @export var dead_radius_pixels := 14.0
+@export var insertion_scale := .65
+@export var insertion_depth := .02
 var active := false
 var holding := false
 var angle_valid := false
@@ -21,10 +23,23 @@ var camera: Camera3D
 var inserted_pencil: Node3D
 var reel: Node3D
 var saved_reel_rotation := 0.0
+var spool: AudioStreamPlayer
+var last_seek_usec := 0
+
+func _ready() -> void:
+	spool = AudioStreamPlayer.new()
+	spool.bus = &"SFX"
+	spool.volume_db = -34.0
+	var texture := preload("res://assets/audio/temporary_voice/spool.wav").duplicate() as AudioStreamWAV
+	texture.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	texture.loop_end = int(texture.get_length()*texture.mix_rate)
+	spool.stream = texture
+	add_child(spool)
 
 func begin(cassette_object: Node3D, pencil_object: Node3D, view_camera: Camera3D) -> void:
 	if active: finish()
 	cassette = cassette_object
+	cassette.reel_seconds_per_turn = tape_seconds_per_turn
 	pencil = pencil_object
 	camera = view_camera
 	tape = cassette.get_node("TapeAudioController")
@@ -37,10 +52,12 @@ func begin(cassette_object: Node3D, pencil_object: Node3D, view_camera: Camera3D
 	inserted_pencil = pencil.get_node("Visual").duplicate() as Node3D
 	inserted_pencil.name = "InsertedPencil"
 	inserted_pencil.rotation = Vector3.ZERO
-	inserted_pencil.scale = Vector3.ONE * .65
+	inserted_pencil.scale = Vector3.ONE * insertion_scale
 	inserted_pencil.position = Vector3(0, .9, 0)
 	cassette.get_node("Visual/ReelLeft/PencilSocket").add_child(inserted_pencil)
-	create_tween().tween_property(inserted_pencil, "position:y", .35, .35)
+	var tip: Vector3 = pencil.get_node("Visual/Tip").position
+	var insertion := -tip * insertion_scale - Vector3.UP * insertion_depth
+	create_tween().tween_property(inserted_pencil, "position", insertion, .35)
 	pencil.hide()
 	pencil.collision_layer = 0
 	active = true
@@ -66,17 +83,21 @@ func drag_to(cursor: Vector2, delta: float) -> void:
 	var angle := radial.angle()
 	if angle_valid:
 		var movement := wrapf(angle - previous_angle, -PI, PI)
-		var seconds := -movement / TAU * tape_seconds_per_turn * sensitivity
+		var seconds := movement / TAU * tape_seconds_per_turn * sensitivity
 		if invert_direction: seconds = -seconds
 		seconds = clampf(seconds, -maximum_seek_speed * delta, maximum_seek_speed * delta)
-		tape.seek(tape.position_seconds + seconds)
-		target_rotation += movement
+		var previous: float = tape.position_seconds
+		tape.seek(previous + seconds)
+		if absf(tape.position_seconds-previous) > .00001: last_seek_usec = Time.get_ticks_usec()
+		# Clamp/rate limiting and end stops also constrain the physical reel rotation.
+		target_rotation -= (tape.position_seconds-previous) / tape_seconds_per_turn * TAU
 	previous_angle = angle
 	angle_valid = true
 
 func release() -> void:
 	holding = false
 	angle_valid = false
+	if spool != null: spool.stop()
 
 func finish() -> void:
 	release()
@@ -90,8 +111,13 @@ func finish() -> void:
 
 func _process(delta: float) -> void:
 	if not active: return
+	var moving := holding and Time.get_ticks_usec()-last_seek_usec < 150000
+	if moving and not spool.playing: spool.play()
+	elif not moving and spool.playing: spool.stop()
+	var previous := displayed_rotation
 	displayed_rotation = lerpf(displayed_rotation, target_rotation, 1.0 - exp(-rotation_smoothing * delta))
 	reel.rotation.y = displayed_rotation
+	cassette.get_node("Visual/ReelRight").rotate_y(displayed_rotation-previous)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not active: return

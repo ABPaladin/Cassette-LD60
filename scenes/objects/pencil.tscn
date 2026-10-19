@@ -48,6 +48,9 @@ rotation = Vector3(0,0,1.5707963)
 
 [node name="Model" type="Node3D" parent="Visual"]
 
+[node name="Tip" type="Marker3D" parent="Visual"]
+position = Vector3(0,-0.57,0)
+
 
 [node name="Shaft" type="MeshInstance3D" parent="Visual/Model"]
 mesh = SubResource("6")

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bxb5vn8c6d7a5"
+path="res://.godot/imported/1970s Escape Lounge Music _ Nuvoluxe - (64 Kbps)_01.ogg-c149838391278dba56c1c721b7919106.oggvorbisstr"
+
+[deps]
+
+source_file="res://audio/1970s Escape Lounge Music _ Nuvoluxe - (64 Kbps)_01.ogg"
+dest_files=["res://.godot/imported/1970s Escape Lounge Music _ Nuvoluxe - (64 Kbps)_01.ogg-c149838391278dba56c1c721b7919106.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

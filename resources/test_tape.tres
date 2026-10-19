@@ -1,10 +1,21 @@
-[gd_resource type="Resource" script_class="" load_steps=3 format=3]
-[ext_resource type="Script" path="res://scripts/tape_data.gd" id="1"]
-[ext_resource type="AudioStream" path="res://assets/audio/placeholder/tape.ogg" id="2"]
+[gd_resource type="Resource" format=3 uid="uid://b6kwh5gx2c2ia"]
+
+[ext_resource type="Script" uid="uid://bmyf87xbf65bl" path="res://scripts/tape_data.gd" id="1"]
+[ext_resource type="AudioStream" uid="uid://brsnkshr0r8hr" path="res://audio/emily recording.ogg" id="2"]
+[ext_resource type="AudioStream" uid="uid://bxb5vn8c6d7a5" path="res://audio/1970s Escape Lounge Music _ Nuvoluxe - (64 Kbps)_01.ogg" id="3"]
+
 [resource]
 script = ExtResource("1")
 recording = ExtResource("2")
-simulated_duration = 180.0
-label = "EMILY / SIDE A"
-regions = Array[Dictionary]([{"id": "development_region", "start": 30.0, "end": 36.0}])
-timestamps = Array[Dictionary]([{"id": "development_mark", "time": 60.0}])
+background_music = ExtResource("3")
+music_volume_db = -24.0
+recording_notice = "EMILY'S RECORDING"
+regions = Array[Dictionary]([{
+"end": 36.0,
+"id": "development_region",
+"start": 30.0
+}])
+timestamps = Array[Dictionary]([{
+"id": "development_mark",
+"time": 60.0
+}])

@@ -21,6 +21,8 @@ func _ready() -> void:
 
 func _replace(path: String, next_state: String) -> Node:
 	if is_instance_valid(content):
+		if content.has_method("_sync_cassette_audio"):
+			content._sync_cassette_audio(true)
 		remove_child(content)
 		content.queue_free()
 	content = load(path).instantiate()

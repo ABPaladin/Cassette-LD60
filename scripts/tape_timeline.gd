@@ -47,6 +47,8 @@ func _process(_delta: float) -> void:
 	if tape == null: return
 	slider.set_value_no_signal(tape.position_seconds)
 	readout.text = "SIDE A   %s / %s   [%s]" % [stamp(tape.position_seconds), stamp(tape.duration), "PLAY" if tape.playing else "PAUSE"]
+	if tape.player.stream == null: readout.text = "SIMULATED / NO AUDIO\n" + readout.text
+	elif not tape.data.recording_notice.is_empty(): readout.text = tape.data.recording_notice + "\n" + readout.text
 	play_button.text = "PAUSE" if tape.playing else "PLAY"
 	play_button.disabled = manual_mode
 
