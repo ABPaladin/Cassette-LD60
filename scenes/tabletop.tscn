@@ -8,7 +8,8 @@
 [ext_resource type="PackedScene" path="res://scenes/objects/sketchbook.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/objects/tamagotchi.tscn" id="7"]
 [ext_resource type="Script" uid="uid://b321qs5bry2dx" path="res://scripts/retro_presentation.gd" id="8"]
-[ext_resource type="Script" path="res://scripts/environment_models.gd" id="9"]
+[ext_resource type="Script" uid="uid://diggoy25t5jwk" path="res://scripts/environment_models.gd" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/objects/emily_photo.tscn" id="10_photo"]
 
 [sub_resource type="StandardMaterial3D" id="1"]
 albedo_color = Color(0.29, 0.15, 0.072, 1)
@@ -146,6 +147,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.43, 0.1, -0.88)
 [node name="Tamagotchi" parent="Objects" unique_id=1792273141 instance=ExtResource("7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8959233, 0.12, -0.72813565)
 
+[node name="EmilyPhoto" parent="Objects" unique_id=1354887279 instance=ExtResource("10_photo")]
+transform = Transform3D(0.99280864, 0, -0.119712204, 0, 1, 0, 0.119712204, 0, 0.99280864, -0.100292265, 0.002, -0.8911297)
+
 [node name="InspectController" type="Node" parent="." unique_id=1029742618]
 script = ExtResource("3")
 camera_path = NodePath("../TabletopCamera")
@@ -153,5 +157,5 @@ camera_path = NodePath("../TabletopCamera")
 [node name="RetroPresentation" type="Node" parent="." unique_id=1705722516]
 script = ExtResource("8")
 
-[node name="EnvironmentModels" type="Node" parent="."]
+[node name="EnvironmentModels" type="Node" parent="." unique_id=1632528479]
 script = ExtResource("9")

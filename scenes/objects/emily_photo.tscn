@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/interactable.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/photo/emily_polaroid_web.png" id="2"]
+
+[sub_resource type="StandardMaterial3D" id="PhotoMaterial"]
+albedo_texture = ExtResource("2")
+metallic = 0.0
+metallic_specular = 0.0
+roughness = 1.0
+cull_mode = 2
+
+[sub_resource type="PlaneMesh" id="PhotoPlane"]
+size = Vector2(0.44, 0.5328125)
+
+[sub_resource type="BoxShape3D" id="PhotoHitArea"]
+size = Vector3(0.44, 0.012, 0.5328125)
+
+[node name="EmilyPhoto" type="Node3D"]
+
+[node name="Interaction" type="StaticBody3D" parent="."]
+script = ExtResource("1")
+object_id = "emily_photo"
+display_name = "EMILY'S PHOTOGRAPH"
+collision_layer = 2
+collision_mask = 0
+inspect_distance = 1.0
+
+[node name="Collision" type="CollisionShape3D" parent="Interaction"]
+shape = SubResource("PhotoHitArea")
+
+[node name="Visual" type="Node3D" parent="Interaction"]
+
+[node name="Model" type="Node3D" parent="Interaction/Visual"]
+
+[node name="Photograph" type="MeshInstance3D" parent="Interaction/Visual/Model"]
+mesh = SubResource("PhotoPlane")
+material_override = SubResource("PhotoMaterial")

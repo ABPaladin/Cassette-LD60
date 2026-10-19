@@ -1,0 +1,92 @@
+[
+  {
+    "source": "res://assets/models/cassette/Cassette.glb",
+    "node": "Model",
+    "output": "res://assets/models/integrated/cassette_body.res",
+    "center": [
+      0.0,
+      2.9802322387695312e-08,
+      0.0
+    ]
+  },
+  {
+    "source": "res://assets/models/cassette/Cassette.glb",
+    "node": "ReelLeft",
+    "output": "res://assets/models/integrated/cassette_reel_left.res",
+    "center": [
+      0.0,
+      0.0,
+      2.9802322387695312e-08
+    ]
+  },
+  {
+    "source": "res://assets/models/cassette/Cassette.glb",
+    "node": "ReelRight",
+    "output": "res://assets/models/integrated/cassette_reel_right.res",
+    "center": [
+      0.0,
+      0.0,
+      -2.9802322387695312e-08
+    ]
+  },
+  {
+    "source": "res://assets/models/pencil/Pencil.glb",
+    "node": "Pencil",
+    "output": "res://assets/models/integrated/pencil.res",
+    "center": [
+      0.0,
+      0.0,
+      -0.028058946132659912
+    ]
+  },
+  {
+    "source": "res://assets/models/pet/Tamogotchi.glb",
+    "node": "Tamogotchi",
+    "output": "res://assets/models/integrated/pet_body.res",
+    "center": [
+      -0.003977596759796143,
+      0.06968200206756592,
+      0.0
+    ]
+  },
+  {
+    "source": "res://assets/models/pet/Tamogotchi.glb",
+    "node": "LCD",
+    "output": "res://assets/models/integrated/pet_lcd.res",
+    "center": [
+      0.1967369168996811,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "source": "res://assets/models/pet/Tamogotchi.glb",
+    "node": "Button0",
+    "output": "res://assets/models/integrated/pet_button_0.res",
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "source": "res://assets/models/pet/Tamogotchi.glb",
+    "node": "Button1",
+    "output": "res://assets/models/integrated/pet_button_1.res",
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "source": "res://assets/models/pet/Tamogotchi.glb",
+    "node": "Button2",
+    "output": "res://assets/models/integrated/pet_button_2.res",
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+]

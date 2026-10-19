@@ -1,9 +1,9 @@
-[gd_resource type="Resource" load_steps=3 format=3]
+[gd_resource type="Resource" format=3 uid="uid://ohnd0s7epbnu"]
 
-[ext_resource type="Script" path="res://scripts/book_page.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/sketchbook/pages/01_emily_portrait.png" id="2"]
+[ext_resource type="Script" uid="uid://bf3tiymwooaka" path="res://scripts/book_page.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://4c68iiud5yiu" path="res://assets/sketchbook/pages/01_emily_portrait2.png" id="1_pbmg2"]
 
 [resource]
 script = ExtResource("1")
-artwork = ExtResource("2")
+artwork = ExtResource("1_pbmg2")
 artwork_full_page = true

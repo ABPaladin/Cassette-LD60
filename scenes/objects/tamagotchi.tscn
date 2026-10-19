@@ -1,6 +1,12 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/tamagotchi.gd" id="1"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pet_body.res" id="art_body"]
+[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pet_lcd.res" id="art_lcd"]
+[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pet_button_0.res" id="art_button_0"]
+[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pet_button_1.res" id="art_button_1"]
+[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pet_button_2.res" id="art_button_2"]
 
 [sub_resource type="StandardMaterial3D" id="1"]
 albedo_color = Color(0.15,0.16,0.16,1)
@@ -38,7 +44,7 @@ subdivide_width = 0
 subdivide_depth = 0
 
 [sub_resource type="BoxShape3D" id="9"]
-size = Vector3(0.13,0.07,0.13)
+size = Vector3(0.09,0.09,0.09)
 
 [sub_resource type="BoxMesh" id="10"]
 size = Vector3(0.1,0.045,0.1)
@@ -46,7 +52,7 @@ subdivide_width = 0
 subdivide_depth = 0
 
 [sub_resource type="BoxShape3D" id="11"]
-size = Vector3(0.13,0.07,0.13)
+size = Vector3(0.09,0.09,0.09)
 
 [sub_resource type="BoxMesh" id="12"]
 size = Vector3(0.1,0.045,0.1)
@@ -54,7 +60,7 @@ subdivide_width = 0
 subdivide_depth = 0
 
 [sub_resource type="BoxShape3D" id="13"]
-size = Vector3(0.13,0.07,0.13)
+size = Vector3(0.09,0.09,0.09)
 
 [node name="Tamagotchi" type="StaticBody3D"]
 script = ExtResource("1")
@@ -74,62 +80,65 @@ rotation = Vector3(0,0,0)
 
 
 [node name="Shell" type="MeshInstance3D" parent="Visual/Model"]
-mesh = SubResource("6")
 material_override = SubResource("2")
-scale = Vector3(0.62,0.14,0.75)
+mesh = ExtResource("art_body")
+transform = Transform3D(0,0.305092196,0,0,0,-0.349334247,-0.391235096,0,0,0,0,0)
 
 [node name="LCD" type="MeshInstance3D" parent="Visual"]
-position = Vector3(0,0.1,-0.065)
-mesh = SubResource("7")
 material_override = SubResource("4")
+mesh = ExtResource("art_lcd")
+transform = Transform3D(0,0.305092196,0,0,0,-0.349334247,-0.391235096,0,0,-0,0.0612364318,0.0243423098)
 
 [node name="Screen" type="Label3D" parent="Visual"]
-position = Vector3(0,0.116,-0.065)
 rotation = Vector3(-1.5707963,0,0)
 text = "00"
 font_size = 48
-pixel_size = 0.004
 outline_size = 0
 modulate = Color(0.04,0.07,0.02,1)
+position = Vector3(-0,0.0672364318,0.0243423098)
+pixel_size = 0.0034
 
 [node name="Button0" type="StaticBody3D" parent="Visual"]
-position = Vector3(-0.18,0.1,0.23)
 collision_layer = 4
 collision_mask = 0
 metadata/button_index = 0
+position = Vector3(-0.120291817,0.0724210619,0.232514231)
 
 [node name="Cap" type="MeshInstance3D" parent="Visual/Button0"]
 position = Vector3(0,0,0)
-mesh = SubResource("8")
 material_override = SubResource("1")
+mesh = ExtResource("art_button_0")
+transform = Transform3D(0,0.305092196,0,0,0,-0.349334247,-0.391235096,0,0,0,0,0)
 
 [node name="Collision" type="CollisionShape3D" parent="Visual/Button0"]
 shape = SubResource("9")
 
 [node name="Button1" type="StaticBody3D" parent="Visual"]
-position = Vector3(0.0,0.1,0.23)
 collision_layer = 4
 collision_mask = 0
 metadata/button_index = 1
+position = Vector3(0.000285266574,0.0724210619,0.27194027)
 
 [node name="Cap" type="MeshInstance3D" parent="Visual/Button1"]
 position = Vector3(0,0,0)
-mesh = SubResource("10")
 material_override = SubResource("1")
+mesh = ExtResource("art_button_1")
+transform = Transform3D(0,0.305092196,0,0,0,-0.349334247,-0.391235096,0,0,0,0,0)
 
 [node name="Collision" type="CollisionShape3D" parent="Visual/Button1"]
 shape = SubResource("11")
 
 [node name="Button2" type="StaticBody3D" parent="Visual"]
-position = Vector3(0.18,0.1,0.23)
 collision_layer = 4
 collision_mask = 0
 metadata/button_index = 2
+position = Vector3(0.120351958,0.0724210619,0.232581799)
 
 [node name="Cap" type="MeshInstance3D" parent="Visual/Button2"]
 position = Vector3(0,0,0)
-mesh = SubResource("12")
 material_override = SubResource("1")
+mesh = ExtResource("art_button_2")
+transform = Transform3D(0,0.305092196,0,0,0,-0.349334247,-0.391235096,0,0,0,0,0)
 
 [node name="Collision" type="CollisionShape3D" parent="Visual/Button2"]
 shape = SubResource("13")

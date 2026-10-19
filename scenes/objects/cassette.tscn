@@ -1,8 +1,12 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/cassette.gd" id="1"]
 
 [ext_resource type="Script" path="res://scripts/tape_audio_controller.gd" id="2"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/integrated/cassette_body.res" id="art_body"]
+[ext_resource type="ArrayMesh" path="res://assets/models/integrated/cassette_reel_left.res" id="art_left"]
+[ext_resource type="ArrayMesh" path="res://assets/models/integrated/cassette_reel_right.res" id="art_right"]
 
 [sub_resource type="StandardMaterial3D" id="1"]
 albedo_color = Color(0.15,0.16,0.16,1)
@@ -88,47 +92,41 @@ rotation = Vector3(0,0,0)
 script = ExtResource("2")
 
 [node name="Shell" type="MeshInstance3D" parent="Visual/Model"]
-position = Vector3(0,0,0)
-mesh = SubResource("6")
-material_override = SubResource("1")
+mesh = ExtResource("art_body")
+transform = Transform3D(0,0.356382163,0,0,0,-0.377021843,-0.346255316,0,0,0,0,0)
 
 [node name="Label" type="MeshInstance3D" parent="Visual/Model"]
 position = Vector3(0,0.066,-0.17)
-mesh = SubResource("7")
 material_override = SubResource("2")
 
 [node name="ReelLeft" type="Node3D" parent="Visual"]
-position = Vector3(-0.22,0.085,0.035)
+position = Vector3(-0.19955351,0.07,-0.0446275714)
 
 [node name="ReelMesh" type="MeshInstance3D" parent="Visual/ReelLeft"]
-mesh = SubResource("8")
-material_override = SubResource("2")
+mesh = ExtResource("art_left")
+transform = Transform3D(0,0.356382163,0,0,0,-0.377021843,-0.346255316,0,0,0,0,0)
 
 [node name="Hole" type="MeshInstance3D" parent="Visual/ReelLeft"]
 position = Vector3(0,0.013,0)
-mesh = SubResource("9")
 material_override = SubResource("1")
 
 [node name="Spoke" type="MeshInstance3D" parent="Visual/ReelLeft"]
 position = Vector3(0,0.015,0)
-mesh = SubResource("10")
 material_override = SubResource("1")
 
 [node name="ReelRight" type="Node3D" parent="Visual"]
-position = Vector3(0.22,0.085,0.035)
+position = Vector3(0.19955351,0.07,-0.0446275714)
 
 [node name="ReelMesh" type="MeshInstance3D" parent="Visual/ReelRight"]
-mesh = SubResource("11")
-material_override = SubResource("2")
+mesh = ExtResource("art_right")
+transform = Transform3D(0,0.356382163,0,0,0,-0.377021843,-0.346255316,0,0,0,0,0)
 
 [node name="Hole" type="MeshInstance3D" parent="Visual/ReelRight"]
 position = Vector3(0,0.013,0)
-mesh = SubResource("12")
 material_override = SubResource("1")
 
 [node name="Spoke" type="MeshInstance3D" parent="Visual/ReelRight"]
 position = Vector3(0,0.015,0)
-mesh = SubResource("13")
 material_override = SubResource("1")
 
 [node name="PencilSocket" type="Marker3D" parent="Visual/ReelLeft"]

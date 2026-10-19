@@ -1,6 +1,8 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/interactable.gd" id="1"]
+
+[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pencil.res" id="art_pencil"]
 
 [sub_resource type="StandardMaterial3D" id="1"]
 albedo_color = Color(0.15,0.16,0.16,1)
@@ -53,10 +55,11 @@ position = Vector3(0,-0.57,0)
 
 
 [node name="Shaft" type="MeshInstance3D" parent="Visual/Model"]
-mesh = SubResource("6")
 material_override = SubResource("2")
+mesh = ExtResource("art_pencil")
+transform = Transform3D(0.401647162,0,0,0,0,-0.401647162,0,0.401647162,0,0,-0.02,0)
 
 [node name="Lead" type="MeshInstance3D" parent="Visual/Model"]
 position = Vector3(0,-0.53,0)
-mesh = SubResource("7")
 material_override = SubResource("1")
+
