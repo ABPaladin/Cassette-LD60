@@ -1,133 +1,85 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene format=3 uid="uid://bgjhvy08rpbon"]
 
-[ext_resource type="Script" path="res://scripts/cassette.gd" id="1"]
-
-[ext_resource type="Script" path="res://scripts/tape_audio_controller.gd" id="2"]
-
-[ext_resource type="ArrayMesh" path="res://assets/models/integrated/cassette_body.res" id="art_body"]
-[ext_resource type="ArrayMesh" path="res://assets/models/integrated/cassette_reel_left.res" id="art_left"]
-[ext_resource type="ArrayMesh" path="res://assets/models/integrated/cassette_reel_right.res" id="art_right"]
-
-[sub_resource type="StandardMaterial3D" id="1"]
-albedo_color = Color(0.15,0.16,0.16,1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="2"]
-albedo_color = Color(0.69,0.64,0.48,1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="3"]
-albedo_color = Color(0.26,0.055,0.07,1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="4"]
-albedo_color = Color(0.3,0.4,0.21,1)
-roughness = 0.9
+[ext_resource type="Script" uid="uid://tor76diuhgp5" path="res://scripts/cassette.gd" id="1"]
+[ext_resource type="Script" uid="uid://cqvaijqeeooll" path="res://scripts/tape_audio_controller.gd" id="2"]
+[ext_resource type="ArrayMesh" uid="uid://0qsof2bv8da" path="res://assets/models/integrated/cassette_body.res" id="art_body"]
+[ext_resource type="ArrayMesh" uid="uid://cc8ho02iwplvr" path="res://assets/models/integrated/cassette_reel_left.res" id="art_left"]
+[ext_resource type="ArrayMesh" uid="uid://0ng3silc8xu4" path="res://assets/models/integrated/cassette_reel_right.res" id="art_right"]
+[ext_resource type="Material" uid="uid://tju6vhrjdr2r" path="res://assets/models/cassette/materials/CassetteBody.tres" id="body_material"]
+[ext_resource type="Material" path="res://assets/models/cassette/materials/CassetteReels.tres" id="reel_material"]
 
 [sub_resource type="BoxShape3D" id="5"]
-size = Vector3(0.95,0.18,0.62)
+size = Vector3(0.95, 0.18, 0.62)
 
-[sub_resource type="BoxMesh" id="6"]
-size = Vector3(0.95,0.12,0.62)
-subdivide_width = 0
-subdivide_depth = 0
+[sub_resource type="StandardMaterial3D" id="2"]
+albedo_color = Color(0.69, 0.64, 0.48, 1)
+roughness = 0.9
 
-[sub_resource type="BoxMesh" id="7"]
-size = Vector3(0.84,0.01,0.17)
-subdivide_width = 0
-subdivide_depth = 0
+[sub_resource type="StandardMaterial3D" id="1"]
+albedo_color = Color(0.15, 0.16, 0.16, 1)
+roughness = 0.9
 
-[sub_resource type="CylinderMesh" id="8"]
-top_radius = 0.13
-bottom_radius = 0.13
-height = 0.015
-radial_segments = 12
-
-[sub_resource type="CylinderMesh" id="9"]
-top_radius = 0.048
-bottom_radius = 0.048
-height = 0.018
-radial_segments = 6
-
-[sub_resource type="BoxMesh" id="10"]
-size = Vector3(0.025,0.015,0.2)
-subdivide_width = 0
-subdivide_depth = 0
-
-[sub_resource type="CylinderMesh" id="11"]
-top_radius = 0.13
-bottom_radius = 0.13
-height = 0.015
-radial_segments = 12
-
-[sub_resource type="CylinderMesh" id="12"]
-top_radius = 0.048
-bottom_radius = 0.048
-height = 0.018
-radial_segments = 6
-
-[sub_resource type="BoxMesh" id="13"]
-size = Vector3(0.025,0.015,0.2)
-subdivide_width = 0
-subdivide_depth = 0
-
-[node name="Cassette" type="StaticBody3D"]
+[node name="Cassette" type="StaticBody3D" unique_id=2066142487]
+collision_layer = 2
+collision_mask = 0
 script = ExtResource("1")
 object_id = "cassette"
 display_name = "CASSETTE"
-collision_layer = 2
-collision_mask = 0
 inspect_distance = 1.55
 
-[node name="Collision" type="CollisionShape3D" parent="."]
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=194266580]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.048, 0)
 shape = SubResource("5")
 
-[node name="Visual" type="Node3D" parent="."]
-rotation = Vector3(0,0,0)
+[node name="Visual" type="Node3D" parent="." unique_id=1592908640]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
-[node name="Model" type="Node3D" parent="Visual"]
+[node name="Model" type="Node3D" parent="Visual" unique_id=1834062160]
 
-
-[node name="TapeAudioController" type="Node" parent="."]
-script = ExtResource("2")
-
-[node name="Shell" type="MeshInstance3D" parent="Visual/Model"]
+[node name="Shell" type="MeshInstance3D" parent="Visual/Model" unique_id=502630100]
+transform = Transform3D(0.3462553, 0, 0, 0, 0.35638204, 0, 0, 0, 0.3770218, 0, -0.048, 0)
 mesh = ExtResource("art_body")
-transform = Transform3D(0,0.356382163,0,0,0,-0.377021843,-0.346255316,0,0,0,0,0)
+surface_material_override/0 = ExtResource("body_material")
+surface_material_override/1 = ExtResource("reel_material")
 
-[node name="Label" type="MeshInstance3D" parent="Visual/Model"]
-position = Vector3(0,0.066,-0.17)
+[node name="Label" type="MeshInstance3D" parent="Visual/Model" unique_id=1641986860]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.066, -0.17)
 material_override = SubResource("2")
 
-[node name="ReelLeft" type="Node3D" parent="Visual"]
-position = Vector3(-0.19955351,0.07,-0.0446275714)
+[node name="ReelLeft" type="Node3D" parent="Visual" unique_id=1336334959]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.19955352, -0.047999986, 0.04462755)
 
-[node name="ReelMesh" type="MeshInstance3D" parent="Visual/ReelLeft"]
+[node name="ReelMesh" type="MeshInstance3D" parent="Visual/ReelLeft" unique_id=1677705087]
+transform = Transform3D(0.3462553, 0, 0, 0, 0.35638204, 0, 0, 0, 0.3770218, 0, 0, 0)
+material_override = ExtResource("reel_material")
 mesh = ExtResource("art_left")
-transform = Transform3D(0,0.356382163,0,0,0,-0.377021843,-0.346255316,0,0,0,0,0)
 
-[node name="Hole" type="MeshInstance3D" parent="Visual/ReelLeft"]
-position = Vector3(0,0.013,0)
+[node name="Hole" type="MeshInstance3D" parent="Visual/ReelLeft" unique_id=941308893]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.013, 0)
 material_override = SubResource("1")
 
-[node name="Spoke" type="MeshInstance3D" parent="Visual/ReelLeft"]
-position = Vector3(0,0.015,0)
+[node name="Spoke" type="MeshInstance3D" parent="Visual/ReelLeft" unique_id=1687643624]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
 material_override = SubResource("1")
 
-[node name="ReelRight" type="Node3D" parent="Visual"]
-position = Vector3(0.19955351,0.07,-0.0446275714)
+[node name="ReelRight" type="Node3D" parent="Visual" unique_id=692824110]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19955352, -0.048000026, 0.044627573)
 
-[node name="ReelMesh" type="MeshInstance3D" parent="Visual/ReelRight"]
+[node name="ReelMesh" type="MeshInstance3D" parent="Visual/ReelRight" unique_id=311382219]
+transform = Transform3D(0.3462553, 0, 0, 0, 0.35638204, 0, 0, 0, 0.3770218, 0, 0, 0)
+material_override = ExtResource("reel_material")
 mesh = ExtResource("art_right")
-transform = Transform3D(0,0.356382163,0,0,0,-0.377021843,-0.346255316,0,0,0,0,0)
 
-[node name="Hole" type="MeshInstance3D" parent="Visual/ReelRight"]
-position = Vector3(0,0.013,0)
+[node name="Hole" type="MeshInstance3D" parent="Visual/ReelRight" unique_id=688999743]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.013, 0)
 material_override = SubResource("1")
 
-[node name="Spoke" type="MeshInstance3D" parent="Visual/ReelRight"]
-position = Vector3(0,0.015,0)
+[node name="Spoke" type="MeshInstance3D" parent="Visual/ReelRight" unique_id=1490599001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
 material_override = SubResource("1")
 
-[node name="PencilSocket" type="Marker3D" parent="Visual/ReelLeft"]
-position = Vector3(0,0.02,0)
+[node name="PencilSocket" type="Marker3D" parent="Visual/ReelRight" unique_id=620263052]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.11436312, -0.0018246174)
+
+[node name="TapeAudioController" type="Node" parent="." unique_id=813896706]
+script = ExtResource("2")

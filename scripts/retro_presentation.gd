@@ -43,7 +43,9 @@ func apply_to_model(root: Node) -> void:
 					root.set_surface_override_material(surface, _convert(original))
 	for child in root.get_children(): apply_to_model(child)
 
-func _convert(original: StandardMaterial3D) -> ShaderMaterial:
+func _convert(original: StandardMaterial3D) -> Material:
+	# Dark textured plastic needs its PBR highlights; retain the screen PSX pass.
+	if original.get_meta("preserve_pbr_lighting", false): return original
 	var material := ShaderMaterial.new()
 	material.shader = mesh_shader
 	if original.blend_mode == BaseMaterial3D.BLEND_MODE_ADD:

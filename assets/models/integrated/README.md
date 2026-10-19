@@ -1,44 +1,60 @@
-# Isolated artist meshes
+# Isolated artist meshes ? updated integration
 
-Checkpoint before integration: `c4696b775f7b19740db2ab99b61346c5c0e3c2cd` (pushed to origin/main).
+Safety checkpoint: `753dabc755a851a9abace3752645e7e7e18ac363`.
 
-The original Cassette.glb, Pencil.glb and Tamogotchi.glb each contain the whole
-Blender scene. Do not instance them directly as gameplay props.
-These nine ArrayMesh resources contain only the named parts listed in
-SOURCE_PARTS.json. Vertex positions were recentered around their bounds; normals,
-UVs, indices and source materials were retained. Original GLBs remain unchanged.
-The center values in that file are the offsets subtracted from source vertices.
+## Source state
 
-## Integration locations
+- Updated cassette: `../cassette/Cassette .glb` (space before extension).
+- Updated pet: `../pet/Tamogotchi.glb`.
+- Pencil: `../pencil/Pencil.glb`, unchanged from the previous integration.
+- No usable sketchbook mesh: revised files contain only an empty Sketchbook_ROOT
+  branch. Keep the working sketchbook and its original artwork.
+- All GLBs still include unrelated scene objects. Never instance whole exports.
 
-- `scenes/objects/cassette.tscn`: Shell, ReelLeft/ReelMesh, ReelRight/ReelMesh.
-  Source +X faces upward; +Z maps left, +Y maps toward the top of the cassette.
-  Body fits the existing 0.95 x 0.12 x 0.62 footprint. Reels keep separate Y-axis
-  anchors, centered over their supplied body locations and raised to Y=0.07.
-  PencilSocket stays under ReelLeft. Old label/hole/spoke meshes are cleared;
-  their nodes remain for compatibility.
-- `scenes/objects/pencil.tscn`: Shaft uses the supplied Pencil mesh, rotated from
-  source Z to local Y. Its pointed end is at the existing Tip marker Y=-0.57;
-  total length is 1.10. The existing Visual rotation lays it horizontally.
-  Lead's old geometry is cleared. Existing temporary pencil material is retained.
-- `scenes/objects/tamagotchi.tscn`: Shell, LCD and three independent Cap meshes.
-  Body fits 0.62 x 0.14 x 0.75 including its top loop. Button bodies and hit boxes
-  follow the imported cap centers. Caps remain at local position zero so the
-  existing negative-Y press animation works. Screen is 0.006 above the LCD and
-  its pixel size is 0.0034 to fit selected-number brackets. Existing shell,
-  button and LCD materials are retained. Layers and button metadata are unchanged.
+SOURCE_PARTS.json records the exact named source mesh for each isolated ArrayMesh
+and the center subtracted from its vertices. Originals and textures are preserved.
+Updating a source GLB does not automatically regenerate these isolated copies.
 
-Artist meshes are scaled/oriented by the existing visual scene nodes; gameplay
-roots, scripts, audio, page artwork, camera and PSX effects are unchanged.
-Mesh copies are stable across original GLB reimports. If artists update a source,
-regenerate the affected isolated mesh explicitly and recheck its anchor offsets.
-No imported whole-scene instance is used. No sketchbook GLB was supplied.
+## Current alignment
 
-## Validation performed
+The updated cassette and pet meshes already use XZ tabletop orientation, front +Y.
+Their old axis-swapping transforms were removed; existing visual nodes now carry
+only scaling and source-relative positions. No gameplay script was changed.
 
-One headless extraction/resource-load pass checked all three imported sources,
-all nine isolated resources, scene loading, expected mesh counts (3/1/5), reel
-centering, pencil-tip alignment and required button/LCD/collision references.
-Zero integration-check failures. The headless engine emitted an unrelated Windows
-root-certificate-store warning. Interactive appearance, button clicks, rewind
-and browser rendering were not play-tested; no Web export was made.
+Cassette: body fits 0.95 x 0.12 x 0.62. Artist ReelRight is at negative X and is
+mapped to the gameplay ReelLeft; artist ReelLeft maps to gameplay ReelRight.
+The shell has open holes at those source centers (vertical mesh-ray check).
+Reels retain the artist's relative height inside the shell; the old Y=0.07
+floating correction was removed. Recentered meshes rotate about the existing
+Y-axis anchors. PencilSocket is 0.012 above the left reel center. The complete
+visual is lowered 0.048, leaving its bottom 0.002 above the existing tabletop.
+The menu instances this same updated cassette scene; its logic is unchanged.
+
+Pet: body fits 0.62 x 0.14 x 0.75. Body, LCD, and buttons use source-relative
+positions and preserve separate gameplay anchors. The body is lowered 0.058 to
+rest just above the tabletop; its existing collision follows. The live Screen
+label is 0.006 above the LCD and retains pixel size 0.0034. Buttons retain their
+metadata, hit boxes and local negative-Y press animation. The newly supplied
+body texture is preserved; temporary dark caps and green LCD remain where needed.
+
+Pencil: unchanged mesh and local-axis conversion retained. The existing negative-Y
+Tip marker still matches the actual pointed mesh end. Visual and collision were
+lowered 0.095732413 onto the tabletop. Insertion continues to duplicate Visual and
+use the existing Tip/socket calculation; input direction and sensitivity are unchanged.
+
+Artist cassette/reel/pet materials currently contain checker/UV-test textures;
+these were preserved rather than replaced or painted over.
+
+## Focused validation
+
+One Godot preview loaded the revised GLBs, regenerated eight isolated resources,
+checked expected object mesh counts (3/1/5), reel pivots, pencil tip, LCD/button
+paths and collision metadata. Zero integration-check failures.
+
+Contact sheet: `artifacts/updated-models-contact.png` (local, ignored by Git).
+Tiles left-to-right, top-to-bottom: menu, tabletop, cassette inspection, inserted
+pencil, pet inspection, photograph front, photograph back, existing sketchbook.
+Visual inspection confirmed the two photo faces, menu cassette orientation,
+recessed reel alignment, inserted pencil, readable LCD and aligned buttons.
+No full gameplay, puzzle or browser tests were run. The engine emitted its existing
+Windows certificate-store warning; no script/resource errors appeared in this pass.

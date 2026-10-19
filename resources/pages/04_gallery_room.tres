@@ -1,7 +1,7 @@
-[gd_resource type="Resource" load_steps=3 format=3]
+[gd_resource type="Resource" format=3 uid="uid://b7g78ahnw7347"]
 
-[ext_resource type="Script" path="res://scripts/book_page.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/sketchbook/pages/04_gallery_room.png" id="2"]
+[ext_resource type="Script" uid="uid://bf3tiymwooaka" path="res://scripts/book_page.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bqmpe6xwo7w64" path="res://assets/sketchbook/pages/04_gallery_room.webp" id="2"]
 
 [resource]
 script = ExtResource("1")

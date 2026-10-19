@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bjmxbiwoc5s6h"
-path="res://.godot/imported/01_emily_portrait_web.png-0290fbec9a74f28913ba9cb953602a15.ctex"
+uid="uid://b1xi3oxggca7f"
+path="res://.godot/imported/01_emily_portrait.webp-91552d3e5a4aa43c4bcc25aead02cbbe.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sketchbook/pages/01_emily_portrait_web.png"
-dest_files=["res://.godot/imported/01_emily_portrait_web.png-0290fbec9a74f28913ba9cb953602a15.ctex"]
+source_file="res://assets/sketchbook/pages/01_emily_portrait.webp"
+dest_files=["res://.godot/imported/01_emily_portrait.webp-91552d3e5a4aa43c4bcc25aead02cbbe.ctex"]
 
 [params]
 

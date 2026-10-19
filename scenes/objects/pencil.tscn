@@ -1,65 +1,40 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene format=3 uid="uid://diemwido4g63s"]
 
-[ext_resource type="Script" path="res://scripts/interactable.gd" id="1"]
-
+[ext_resource type="Script" uid="uid://5ap3chv6ktjr" path="res://scripts/interactable.gd" id="1"]
 [ext_resource type="ArrayMesh" path="res://assets/models/integrated/pencil.res" id="art_pencil"]
-
-[sub_resource type="StandardMaterial3D" id="1"]
-albedo_color = Color(0.15,0.16,0.16,1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="2"]
-albedo_color = Color(0.69,0.64,0.48,1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="3"]
-albedo_color = Color(0.26,0.055,0.07,1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="4"]
-albedo_color = Color(0.3,0.4,0.21,1)
-roughness = 0.9
+[ext_resource type="Material" path="res://assets/models/pencil/materials/PencilMaterial.tres" id="pencil_material"]
 
 [sub_resource type="BoxShape3D" id="5"]
-size = Vector3(1.1,0.13,0.14)
+size = Vector3(1.71, 0.13, 0.14)
 
-[sub_resource type="CylinderMesh" id="6"]
-top_radius = 0.032
-bottom_radius = 0.032
-height = 1.0
-radial_segments = 6
+[sub_resource type="StandardMaterial3D" id="1"]
+albedo_color = Color(0.15, 0.16, 0.16, 1)
+roughness = 0.9
 
-[sub_resource type="BoxMesh" id="7"]
-size = Vector3(0.025,0.08,0.025)
-subdivide_width = 0
-subdivide_depth = 0
-
-[node name="Pencil" type="StaticBody3D"]
+[node name="Pencil" type="StaticBody3D" unique_id=1656156750]
+collision_layer = 2
+collision_mask = 0
 script = ExtResource("1")
 object_id = "pencil"
 display_name = "PENCIL"
-collision_layer = 2
-collision_mask = 0
-inspect_distance = 1.35
 
-[node name="Collision" type="CollisionShape3D" parent="."]
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=1646844461]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.09573241, 0)
 shape = SubResource("5")
 
-[node name="Visual" type="Node3D" parent="."]
-rotation = Vector3(0,0,1.5707963)
+[node name="Visual" type="Node3D" parent="." unique_id=885106099]
+transform = Transform3D(7.54979e-08, -1, 0, 1, 7.54979e-08, 0, 0, 0, 1, 0, -0.09573241, 0)
 
-[node name="Model" type="Node3D" parent="Visual"]
+[node name="Model" type="Node3D" parent="Visual" unique_id=1176154662]
 
-[node name="Tip" type="Marker3D" parent="Visual"]
-position = Vector3(0,-0.57,0)
-
-
-[node name="Shaft" type="MeshInstance3D" parent="Visual/Model"]
-material_override = SubResource("2")
+[node name="Shaft" type="MeshInstance3D" parent="Visual/Model" unique_id=2033398501]
+transform = Transform3D(-0.23697178, 0.41044727, -4.7072966e-08, -5.3672625e-08, 1.0271176e-08, 0.6243787, 0.41044727, 0.23697178, 5.447006e-08, 0, -0.02, 0)
+material_override = ExtResource("pencil_material")
 mesh = ExtResource("art_pencil")
-transform = Transform3D(0.401647162,0,0,0,0,-0.401647162,0,0.401647162,0,0,-0.02,0)
 
-[node name="Lead" type="MeshInstance3D" parent="Visual/Model"]
-position = Vector3(0,-0.53,0)
+[node name="Lead" type="MeshInstance3D" parent="Visual/Model" unique_id=1220504696]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.53, 0)
 material_override = SubResource("1")
 
+[node name="Tip" type="Marker3D" parent="Visual" unique_id=1692517637]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.875, 0)

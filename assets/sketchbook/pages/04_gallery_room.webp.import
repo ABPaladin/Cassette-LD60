@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://wrluby6mnt7m"
-path="res://.godot/imported/02_tamagotchi_memories_web.png-7ece6a8e591c902b77556b48237ec736.ctex"
+uid="uid://bqmpe6xwo7w64"
+path="res://.godot/imported/04_gallery_room.webp-f7abd7be91460728c2cd77f9abbc2db1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sketchbook/pages/02_tamagotchi_memories_web.png"
-dest_files=["res://.godot/imported/02_tamagotchi_memories_web.png-7ece6a8e591c902b77556b48237ec736.ctex"]
+source_file="res://assets/sketchbook/pages/04_gallery_room.webp"
+dest_files=["res://.godot/imported/04_gallery_room.webp-f7abd7be91460728c2cd77f9abbc2db1.ctex"]
 
 [params]
 

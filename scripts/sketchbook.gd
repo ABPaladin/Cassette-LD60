@@ -1,6 +1,6 @@
 extends "res://scripts/interactable.gd"
 signal page_changed(index: int)
-@export var pages: Array[Resource] = [preload("res://resources/pages/01_emily_portrait.tres"), preload("res://resources/pages/02_tamagotchi_memories.tres"), preload("res://resources/pages/03_gaming_memories.tres"), preload("res://resources/pages/04_gallery_room.tres")]
+@export var pages: Array[Resource] = [preload("res://resources/pages/01_emily_portrait.tres"), preload("res://resources/pages/02_tamagotchi_memories.tres"), preload("res://resources/pages/03_gaming_memories.tres"), preload("res://resources/pages/04_gallery_room.tres"), preload("res://resources/pages/05_emily_door.tres")]
 var opened := false
 var page_index := 0
 var cover_tween: Tween

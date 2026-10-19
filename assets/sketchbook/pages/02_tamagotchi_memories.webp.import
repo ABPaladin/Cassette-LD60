@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4c68iiud5yiu"
-path="res://.godot/imported/01_emily_portrait2.png-06b74d8f4bd04501423f88badccc7f8c.ctex"
+uid="uid://fasqergomgbx"
+path="res://.godot/imported/02_tamagotchi_memories.webp-df84a40c30334d8fbcb0ebe0c98b620f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sketchbook/pages/01_emily_portrait2.png"
-dest_files=["res://.godot/imported/01_emily_portrait2.png-06b74d8f4bd04501423f88badccc7f8c.ctex"]
+source_file="res://assets/sketchbook/pages/02_tamagotchi_memories.webp"
+dest_files=["res://.godot/imported/02_tamagotchi_memories.webp-df84a40c30334d8fbcb0ebe0c98b620f.ctex"]
 
 [params]
 

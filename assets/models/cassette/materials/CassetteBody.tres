@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://tju6vhrjdr2r"]
+
+[ext_resource type="Texture2D" uid="uid://d2y8nlp0woah7" path="res://assets/models/cassette/CassetteM-Colour.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://c27pi4ipmros0" path="res://assets/models/cassette/CassetteM-Metallic.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://b6cikc6fbjb8h" path="res://assets/models/cassette/CassetteM-Roughness.png" id="3"]
+
+[resource]
+resource_name = "CassetteBody"
+albedo_texture = ExtResource("1")
+metallic = 1.0
+metallic_texture = ExtResource("2")
+roughness = 0.8
+roughness_texture = ExtResource("3")
+metadata/preserve_pbr_lighting = true

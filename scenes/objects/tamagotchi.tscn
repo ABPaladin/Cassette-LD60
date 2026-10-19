@@ -1,144 +1,106 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene format=3 uid="uid://dx81lkdpkw8s0"]
 
-[ext_resource type="Script" path="res://scripts/tamagotchi.gd" id="1"]
-
-[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pet_body.res" id="art_body"]
-[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pet_lcd.res" id="art_lcd"]
-[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pet_button_0.res" id="art_button_0"]
-[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pet_button_1.res" id="art_button_1"]
-[ext_resource type="ArrayMesh" path="res://assets/models/integrated/pet_button_2.res" id="art_button_2"]
-
-[sub_resource type="StandardMaterial3D" id="1"]
-albedo_color = Color(0.15,0.16,0.16,1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="2"]
-albedo_color = Color(0.69,0.64,0.48,1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="3"]
-albedo_color = Color(0.26,0.055,0.07,1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="4"]
-albedo_color = Color(0.3,0.4,0.21,1)
-roughness = 0.9
+[ext_resource type="Script" uid="uid://nx2dpymj714v" path="res://scripts/tamagotchi.gd" id="1"]
+[ext_resource type="ArrayMesh" uid="uid://cpq7g7deeavct" path="res://assets/models/integrated/pet_body.res" id="art_body"]
+[ext_resource type="ArrayMesh" uid="uid://dw4n3n2meha70" path="res://assets/models/integrated/pet_button_0.res" id="art_button_0"]
+[ext_resource type="ArrayMesh" uid="uid://8njfidybchn5" path="res://assets/models/integrated/pet_button_1.res" id="art_button_1"]
+[ext_resource type="ArrayMesh" uid="uid://dh3ac2f84uvek" path="res://assets/models/integrated/pet_button_2.res" id="art_button_2"]
+[ext_resource type="ArrayMesh" uid="uid://bh1ei66mh2i8b" path="res://assets/models/integrated/pet_lcd.res" id="art_lcd"]
+[ext_resource type="Material" path="res://assets/models/pet/materials/TamagotchiBody.tres" id="body_material"]
+[ext_resource type="Material" path="res://assets/models/pet/materials/TamagotchiScreen.tres" id="screen_material"]
 
 [sub_resource type="BoxShape3D" id="5"]
-size = Vector3(0.62,0.18,0.75)
+size = Vector3(0.62, 0.18, 0.75)
 
-[sub_resource type="SphereMesh" id="6"]
-radius = 0.5
-height = 1.0
-radial_segments = 10
-rings = 6
-
-[sub_resource type="BoxMesh" id="7"]
-size = Vector3(0.41,0.02,0.35)
-subdivide_width = 0
-subdivide_depth = 0
-
-[sub_resource type="BoxMesh" id="8"]
-size = Vector3(0.1,0.045,0.1)
-subdivide_width = 0
-subdivide_depth = 0
+[sub_resource type="StandardMaterial3D" id="1"]
+resource_name = "UntexturedKeyring"
+albedo_color = Color(0.35, 0.35, 0.35, 1)
+metallic = 0.7
+roughness = 0.65
+metadata/preserve_pbr_lighting = true
 
 [sub_resource type="BoxShape3D" id="9"]
-size = Vector3(0.09,0.09,0.09)
-
-[sub_resource type="BoxMesh" id="10"]
-size = Vector3(0.1,0.045,0.1)
-subdivide_width = 0
-subdivide_depth = 0
+size = Vector3(0.09, 0.09, 0.09)
 
 [sub_resource type="BoxShape3D" id="11"]
-size = Vector3(0.09,0.09,0.09)
-
-[sub_resource type="BoxMesh" id="12"]
-size = Vector3(0.1,0.045,0.1)
-subdivide_width = 0
-subdivide_depth = 0
+size = Vector3(0.09, 0.09, 0.09)
 
 [sub_resource type="BoxShape3D" id="13"]
-size = Vector3(0.09,0.09,0.09)
+size = Vector3(0.09, 0.09, 0.09)
 
-[node name="Tamagotchi" type="StaticBody3D"]
+[node name="Tamagotchi" type="StaticBody3D" unique_id=163659425]
+collision_layer = 2
+collision_mask = 0
 script = ExtResource("1")
 object_id = "tamagotchi"
 display_name = "TAMAGOTCHI"
-collision_layer = 2
-collision_mask = 0
 inspect_distance = 1.25
 
-[node name="Collision" type="CollisionShape3D" parent="."]
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=192770396]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.058, 0)
 shape = SubResource("5")
 
-[node name="Visual" type="Node3D" parent="."]
-rotation = Vector3(0,0,0)
+[node name="Visual" type="Node3D" parent="." unique_id=186802139]
 
-[node name="Model" type="Node3D" parent="Visual"]
+[node name="Model" type="Node3D" parent="Visual" unique_id=676944278]
 
-
-[node name="Shell" type="MeshInstance3D" parent="Visual/Model"]
-material_override = SubResource("2")
+[node name="Shell" type="MeshInstance3D" parent="Visual/Model" unique_id=203277862]
+transform = Transform3D(0.39123508, 0, 0, 0, 0.30509213, 0, 0, 0, 0.34933424, 0, -0.058, 0)
 mesh = ExtResource("art_body")
-transform = Transform3D(0,0.305092196,0,0,0,-0.349334247,-0.391235096,0,0,0,0,0)
+surface_material_override/0 = ExtResource("body_material")
+surface_material_override/1 = SubResource("1")
 
-[node name="LCD" type="MeshInstance3D" parent="Visual"]
-material_override = SubResource("4")
+[node name="LCD" type="MeshInstance3D" parent="Visual" unique_id=1268490847]
+transform = Transform3D(0.39123508, 0, 0, 0, 0.30509213, 0, 0, 0, 0.34933424, 2.3319428e-08, 0.0032364137, 0.02434233)
+material_override = ExtResource("screen_material")
 mesh = ExtResource("art_lcd")
-transform = Transform3D(0,0.305092196,0,0,0,-0.349334247,-0.391235096,0,0,-0,0.0612364318,0.0243423098)
 
-[node name="Screen" type="Label3D" parent="Visual"]
-rotation = Vector3(-1.5707963,0,0)
+[node name="Screen" type="Label3D" parent="Visual" unique_id=585265967]
+transform = Transform3D(1, 0, 0, 0, 7.54979e-08, 1, 0, -1, 7.54979e-08, 2.3319428e-08, 0.009236414, 0.02434233)
+pixel_size = 0.0034
+modulate = Color(0.04, 0.07, 0.02, 1)
 text = "00"
 font_size = 48
 outline_size = 0
-modulate = Color(0.04,0.07,0.02,1)
-position = Vector3(-0,0.0672364318,0.0243423098)
-pixel_size = 0.0034
 
-[node name="Button0" type="StaticBody3D" parent="Visual"]
+[node name="Button0" type="StaticBody3D" parent="Visual" unique_id=746787617]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.120291784, 0.014421054, 0.23251429)
 collision_layer = 4
 collision_mask = 0
 metadata/button_index = 0
-position = Vector3(-0.120291817,0.0724210619,0.232514231)
 
-[node name="Cap" type="MeshInstance3D" parent="Visual/Button0"]
-position = Vector3(0,0,0)
-material_override = SubResource("1")
+[node name="Cap" type="MeshInstance3D" parent="Visual/Button0" unique_id=1722677417]
+transform = Transform3D(0.39123508, 0, 0, 0, 0.30509213, 0, 0, 0, 0.34933424, 0, 0, 0)
+material_override = ExtResource("body_material")
 mesh = ExtResource("art_button_0")
-transform = Transform3D(0,0.305092196,0,0,0,-0.349334247,-0.391235096,0,0,0,0,0)
 
-[node name="Collision" type="CollisionShape3D" parent="Visual/Button0"]
+[node name="Collision" type="CollisionShape3D" parent="Visual/Button0" unique_id=1843263532]
 shape = SubResource("9")
 
-[node name="Button1" type="StaticBody3D" parent="Visual"]
+[node name="Button1" type="StaticBody3D" parent="Visual" unique_id=201970985]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00028532487, 0.014421048, 0.27194032)
 collision_layer = 4
 collision_mask = 0
 metadata/button_index = 1
-position = Vector3(0.000285266574,0.0724210619,0.27194027)
 
-[node name="Cap" type="MeshInstance3D" parent="Visual/Button1"]
-position = Vector3(0,0,0)
-material_override = SubResource("1")
+[node name="Cap" type="MeshInstance3D" parent="Visual/Button1" unique_id=1656261579]
+transform = Transform3D(0.39123508, 0, 0, 0, 0.30509213, 0, 0, 0, 0.34933424, 0, 0, 0)
+material_override = ExtResource("body_material")
 mesh = ExtResource("art_button_1")
-transform = Transform3D(0,0.305092196,0,0,0,-0.349334247,-0.391235096,0,0,0,0,0)
 
-[node name="Collision" type="CollisionShape3D" parent="Visual/Button1"]
+[node name="Collision" type="CollisionShape3D" parent="Visual/Button1" unique_id=2136750276]
 shape = SubResource("11")
 
-[node name="Button2" type="StaticBody3D" parent="Visual"]
+[node name="Button2" type="StaticBody3D" parent="Visual" unique_id=1454032548]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12035201, 0.014421038, 0.23258184)
 collision_layer = 4
 collision_mask = 0
 metadata/button_index = 2
-position = Vector3(0.120351958,0.0724210619,0.232581799)
 
-[node name="Cap" type="MeshInstance3D" parent="Visual/Button2"]
-position = Vector3(0,0,0)
-material_override = SubResource("1")
+[node name="Cap" type="MeshInstance3D" parent="Visual/Button2" unique_id=1343331229]
+transform = Transform3D(0.39123508, 0, 0, 0, 0.30509213, 0, 0, 0, 0.34933424, 0, 0, 0)
+material_override = ExtResource("body_material")
 mesh = ExtResource("art_button_2")
-transform = Transform3D(0,0.305092196,0,0,0,-0.349334247,-0.391235096,0,0,0,0,0)
 
-[node name="Collision" type="CollisionShape3D" parent="Visual/Button2"]
+[node name="Collision" type="CollisionShape3D" parent="Visual/Button2" unique_id=171927262]
 shape = SubResource("13")

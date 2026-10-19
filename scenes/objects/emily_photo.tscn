@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/interactable.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/photo/emily_polaroid_web.png" id="2"]
@@ -8,7 +8,14 @@ albedo_texture = ExtResource("2")
 metallic = 0.0
 metallic_specular = 0.0
 roughness = 1.0
-cull_mode = 2
+cull_mode = 0
+
+[sub_resource type="StandardMaterial3D" id="PhotoBackMaterial"]
+albedo_color = Color(0.87, 0.83, 0.73, 1)
+metallic = 0.0
+metallic_specular = 0.0
+roughness = 1.0
+cull_mode = 0
 
 [sub_resource type="PlaneMesh" id="PhotoPlane"]
 size = Vector2(0.44, 0.5328125)
@@ -36,3 +43,9 @@ shape = SubResource("PhotoHitArea")
 [node name="Photograph" type="MeshInstance3D" parent="Interaction/Visual/Model"]
 mesh = SubResource("PhotoPlane")
 material_override = SubResource("PhotoMaterial")
+
+[node name="PaperBack" type="MeshInstance3D" parent="Interaction/Visual/Model"]
+position = Vector3(0, -0.0015, 0)
+rotation = Vector3(3.14159265, 0, 0)
+mesh = SubResource("PhotoPlane")
+material_override = SubResource("PhotoBackMaterial")

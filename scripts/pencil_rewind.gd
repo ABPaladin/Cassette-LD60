@@ -7,7 +7,6 @@ signal exited
 @export var invert_direction := false
 @export var maximum_seek_speed := 30.0
 @export var dead_radius_pixels := 14.0
-@export var insertion_scale := .65
 @export var insertion_depth := .02
 var active := false
 var holding := false
@@ -45,18 +44,22 @@ func begin(cassette_object: Node3D, pencil_object: Node3D, view_camera: Camera3D
 	tape = cassette.get_node("TapeAudioController")
 	tape.pause()
 	cassette.reset_model_rotation()
-	reel = cassette.get_node("Visual/ReelLeft")
+	# The cassette Visual is turned 180 degrees: ReelRight is screen-left.
+	reel = cassette.get_node("Visual/ReelRight")
 	saved_reel_rotation = reel.rotation.y
 	target_rotation = saved_reel_rotation
 	displayed_rotation = saved_reel_rotation
 	inserted_pencil = pencil.get_node("Visual").duplicate() as Node3D
 	inserted_pencil.name = "InsertedPencil"
 	inserted_pencil.rotation = Vector3.ZERO
-	inserted_pencil.scale = Vector3.ONE * insertion_scale
 	inserted_pencil.position = Vector3(0, .9, 0)
-	cassette.get_node("Visual/ReelLeft/PencilSocket").add_child(inserted_pencil)
+	var socket: Node3D = reel.get_node("PencilSocket")
+	socket.add_child(inserted_pencil)
+	# Preserve resting physical dimensions, excluding the temporary hover enlargement.
+	var physical_scale: Vector3 = (pencil.global_basis * pencil.rest_visual.basis).get_scale().abs()
+	inserted_pencil.basis = socket.global_basis.inverse() * socket.global_basis.orthonormalized().scaled_local(physical_scale)
 	var tip: Vector3 = pencil.get_node("Visual/Tip").position
-	var insertion := -tip * insertion_scale - Vector3.UP * insertion_depth
+	var insertion := -(inserted_pencil.basis * tip) - Vector3.UP * insertion_depth
 	create_tween().tween_property(inserted_pencil, "position", insertion, .35)
 	pencil.hide()
 	pencil.collision_layer = 0
@@ -117,7 +120,7 @@ func _process(delta: float) -> void:
 	var previous := displayed_rotation
 	displayed_rotation = lerpf(displayed_rotation, target_rotation, 1.0 - exp(-rotation_smoothing * delta))
 	reel.rotation.y = displayed_rotation
-	cassette.get_node("Visual/ReelRight").rotate_y(displayed_rotation-previous)
+	cassette.get_node("Visual/ReelLeft").rotate_y(displayed_rotation-previous)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not active: return
