@@ -230,10 +230,10 @@ func _build_ui() -> void:
 		var sound_button := UI.button(ui,"SOUND",func(): sound_panel.visible = not sound_panel.visible)
 		sound_button.position = Vector2(24,61)
 		sound_button.add_theme_font_size_override("font_size",14)
-	if OS.is_debug_build() and not OS.has_feature("web"):
-		var debug_button := UI.button(ui, "DEBUG: ENDING [F9]", _debug_ending)
-		debug_button.position = Vector2(714, 16)
-		debug_button.add_theme_font_size_override("font_size", 14)
+	#if OS.is_debug_build() and not OS.has_feature("web"):
+		#var debug_button := UI.button(ui, "DEBUG: ENDING [F9]", _debug_ending)
+		#debug_button.position = Vector2(714, 16)
+		#debug_button.add_theme_font_size_override("font_size", 14)
 
 func _selection_changed(object: Node3D) -> void:
 	if rewinder != null and rewinder.active:
@@ -298,13 +298,13 @@ func _process(_delta: float) -> void:
 	else:
 		timeline.position = Vector2(420, 330)
 
-func _debug_ending() -> void:
-	if not OS.is_debug_build() or OS.has_feature("web") or ending_started: return
-	ending_started = true
-	fragment_panel.hide()
-	fragment_panel.replay.stop()
-	ending.begin()
+#func _debug_ending() -> void:
+	#if not OS.is_debug_build() or OS.has_feature("web") or ending_started: return
+	#ending_started = true
+	#fragment_panel.hide()
+	#fragment_panel.replay.stop()
+	#ending.begin()
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F9:
-		_debug_ending()
+#func _unhandled_input(event: InputEvent) -> void:
+	#if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F9:
+		#_debug_ending()

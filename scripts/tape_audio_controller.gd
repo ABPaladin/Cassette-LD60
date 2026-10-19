@@ -24,6 +24,8 @@ var bus_name: StringName
 
 func _ready() -> void:
 	player = AudioStreamPlayer.new()
+	# Long OGGs must decode incrementally, not become full Web Audio samples.
+	if OS.has_feature("web"): player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 	add_child(player)
 	player.stream = data.recording
 	if player.stream == null and not data.recording_path.is_empty():
@@ -40,7 +42,7 @@ func _ready() -> void:
 	AudioServer.set_bus_send(index, &"Cassette")
 	player.bus = bus_name
 	_setup_music()
-	# Web Sample playback cannot run bus effects. Shipping media is pre-rendered.
+	# Keep the existing dry Web mix. Shipping media is pre-rendered.
 	if OS.has_feature("web"): return
 	var distortion := AudioEffectDistortion.new()
 	distortion.drive = data.distortion
@@ -63,11 +65,13 @@ func _exit_tree() -> void:
 
 func _process(delta: float) -> void:
 	advance(delta)
-	if playing: _sync_music()
+	# Web streams share the mixer clock; sync only on transport actions there.
+	if playing and not OS.has_feature("web"): _sync_music()
 
 func _setup_music() -> void:
 	if data.background_music == null: return
 	music = AudioStreamPlayer.new()
+	if OS.has_feature("web"): music.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 	music.name = "CafeRadio"
 	add_child(music)
 	# Loop only this in-memory resource; the source OGG/import settings stay intact.
@@ -78,7 +82,7 @@ func _setup_music() -> void:
 	music.volume_db = data.music_volume_db
 	music.pitch_scale = pitch
 	music.bus = &"Cassette"
-	# Web sample playback bypasses effects; retain the quiet dry mix there.
+	# Retain the quiet dry Web mix.
 	if OS.has_feature("web"): return
 	music_bus = StringName("CafeRadio_" + str(get_instance_id()))
 	AudioServer.add_bus()
@@ -96,7 +100,7 @@ func _sync_music(force_position: bool = false) -> void:
 	var target := fposmod(position_seconds, length)
 	music.stream_paused = not playing
 	if not playing:
-		if force_position and music.has_stream_playback(): music.seek(target)
+		if force_position and not OS.has_feature("web") and music.has_stream_playback(): music.seek(target)
 		return
 	if force_position or not music.playing:
 		music.play(target)
@@ -137,7 +141,7 @@ func play() -> void:
 	if position_seconds >= duration: seek(0.0)
 	playing = true
 	if player.stream != null:
-		# Recreate from the held transport position. This also works with Web samples.
+		# Apply the held position once, including silent Web pencil seeks.
 		player.play(position_seconds)
 		player.stream_paused = false
 	_sync_music(true)
@@ -164,7 +168,8 @@ func stop() -> void:
 func seek(seconds: float) -> void:
 	position_seconds = clampf(seconds, 0.0, duration)
 	seeked.emit(position_seconds)
-	if player.stream != null:
+	# While paused on Web, move only the transport. play() applies the final seek.
+	if player.stream != null and (playing or not OS.has_feature("web")):
 		player.stream_paused = not playing
 		if player.has_stream_playback(): player.seek(position_seconds)
 		else: player.play(position_seconds)
