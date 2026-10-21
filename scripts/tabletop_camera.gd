@@ -13,6 +13,8 @@ var inspecting := false
 var returning := false
 var controls_enabled := true
 var cinematic := false
+var touch_positions: Dictionary = {}
+var pinch_distance := 0.0
 
 func _ready() -> void:
 	# The saved scene transform defines the composition, independent of cursor input.
@@ -52,12 +54,45 @@ func inspect_at(point: Vector3, distance: float) -> void:
 	inspect_distance = clampf(distance, zoom_limits.x, zoom_limits.y)
 	inspecting = true
 	returning = false
+	touch_positions.clear()
+	pinch_distance = 0.0
 
 func return_to_table() -> void:
 	if not inspecting: return
 	inspecting = false
 	returning = true
+	touch_positions.clear()
+	pinch_distance = 0.0
 
 func zoom(amount: float) -> void:
 	if inspecting:
 		inspect_distance = clampf(inspect_distance + amount, zoom_limits.x, zoom_limits.y)
+
+func _input(event: InputEvent) -> void:
+	if not OS.has_feature("web") or not inspecting: return
+	if event is InputEventMagnifyGesture:
+		zoom((1.0 - event.factor) * inspect_distance)
+		get_viewport().set_input_as_handled()
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			touch_positions[event.index] = event.position
+		else:
+			touch_positions.erase(event.index)
+		pinch_distance = _current_pinch_distance()
+	elif event is InputEventScreenDrag and touch_positions.has(event.index):
+		touch_positions[event.index] = event.position
+		var next_distance := _current_pinch_distance()
+		if pinch_distance > 0.0 and next_distance > 0.0:
+			var viewport_height := maxf(get_viewport().get_visible_rect().size.y, 1.0)
+			var world_per_pixel := inspect_distance * 2.0 * tan(deg_to_rad(fov) * 0.5) / viewport_height
+			zoom((pinch_distance - next_distance) * world_per_pixel)
+			get_viewport().set_input_as_handled()
+		pinch_distance = next_distance
+	elif event is InputEventMouseMotion and touch_positions.size() >= 2:
+		# Browsers may also emulate a mouse drag from the first finger.
+		get_viewport().set_input_as_handled()
+
+func _current_pinch_distance() -> float:
+	if touch_positions.size() != 2: return 0.0
+	var points: Array = touch_positions.values()
+	return (points[0] as Vector2).distance_to(points[1] as Vector2)

@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://vds6fbtrtmmy"
-path="res://.godot/imported/Cassette .glb-3a96723febc9edf1bbb678686897bc6a.scn"
+uid="uid://d2k6ctvfruauv"
+path="res://.godot/imported/cassette.glb-8931a18b3e73deb0f0c5728cbbf9e1db.scn"
 
 [deps]
 
-source_file="res://assets/models/cassette/Cassette .glb"
-dest_files=["res://.godot/imported/Cassette .glb-3a96723febc9edf1bbb678686897bc6a.scn"]
+source_file="res://assets/models/cassette/cassette.glb"
+dest_files=["res://.godot/imported/cassette.glb-8931a18b3e73deb0f0c5728cbbf9e1db.scn"]
 
 [params]
 
